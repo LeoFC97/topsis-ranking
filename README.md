@@ -26,4 +26,11 @@ npm run dev
 
 ## Deploy
 
-Build para produção: `npm run build`
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FLeoFC97%2Ftopsis-ranking)
+
+1. Clique no botão acima ou acesse [vercel.com/new](https://vercel.com/new)
+2. Importe o repositório `LeoFC97/topsis-ranking`
+3. Clique em **Deploy** (a Vercel detecta Vite automaticamente)
+4. Pronto — seu link estará em `https://topsis-ranking-xxx.vercel.app`
+
+Build local: `npm run build`

@@ -195,7 +195,10 @@ export function DashboardLayout({
                     </button>
                     <button
                       type="button"
-                      onClick={onCalculate}
+                      onClick={() => {
+                        onCalculate();
+                        setActiveTab('ranking');
+                      }}
                       className={styles.calcBtn}
                     >
                       Calcular ranking
