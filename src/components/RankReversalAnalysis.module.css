@@ -1,0 +1,140 @@
+.section {
+  padding: 0.5rem 0;
+}
+
+.title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 0.5rem;
+}
+
+.intro {
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+}
+
+.controls {
+  margin-bottom: 1.5rem;
+}
+
+.controlLabel {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-h);
+  margin: 0 0 0.75rem;
+}
+
+.checkboxGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.checkboxLabel input {
+  accent-color: var(--accent);
+}
+
+.rankHint {
+  font-size: 0.8rem;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.analyzeBtn {
+  padding: 0.6rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.analyzeBtn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 88%, black);
+}
+
+.analyzeBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.results {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.resultsTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 0.75rem;
+}
+
+.summary {
+  font-size: 0.95rem;
+  color: #dc2626;
+  margin: 0 0 0.75rem;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th,
+.table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border: 1px solid var(--border);
+}
+
+.table th {
+  background: var(--code-bg);
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.table tbody tr:hover {
+  background: var(--bg);
+}
+
+.reversedRow {
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.reversedRow:hover {
+  background: rgba(220, 38, 38, 0.12);
+}
+
+.changeCell {
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.hint {
+  font-size: 0.95rem;
+  color: var(--text);
+  margin: 0;
+}

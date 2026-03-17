@@ -1,0 +1,202 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  text-align: left;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.app__section {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: var(--code-bg);
+}
+
+.app__section-title {
+  font-size: 1.25rem;
+  margin: 0 0 0.5rem;
+  color: var(--text-h);
+}
+
+.app__header {
+  width: 100%;
+  text-align: center;
+}
+
+.app__header h1 {
+  margin: 0;
+}
+
+.app__action {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.app__calculate {
+  font-size: 1rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.app__calculate:hover {
+  background: color-mix(in srgb, var(--accent) 85%, black);
+}
+
+.app__error {
+  color: #c00;
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+.app__info {
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.app__section--steps {
+  overflow-x: auto;
+}
+
+/* File upload */
+.file-upload {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.file-upload__input {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.file-upload__button {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.file-upload__button:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.file-upload__button--primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.file-upload__button--primary:hover {
+  background: color-mix(in srgb, var(--accent) 85%, black);
+  border-color: color-mix(in srgb, var(--accent) 85%, black);
+}
+
+.file-upload__divider {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.file-upload__status {
+  width: 100%;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.calculate-btn {
+  font-size: 1rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.calculate-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 85%, black);
+}
+
+.calculate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Charts & Dashboard */
+.chart-container,
+.heatmap-container {
+  margin-bottom: 1.5rem;
+}
+
+.chart-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 0.25rem;
+}
+
+.chart-subtitle {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin: 0 0 0.75rem;
+}
+
+.heatmap-scroll {
+  overflow-x: auto;
+}
+
+.heatmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.heatmap-corner,
+.heatmap-header {
+  padding: 8px 10px;
+  text-align: center;
+  font-weight: 600;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.heatmap-row-label {
+  padding: 8px 10px;
+  font-weight: 500;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.heatmap-cell {
+  padding: 6px 10px;
+  text-align: center;
+  border: 1px solid var(--border);
+  color: var(--text-h);
+  min-width: 48px;
+}

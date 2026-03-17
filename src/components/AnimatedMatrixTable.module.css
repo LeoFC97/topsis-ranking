@@ -1,0 +1,70 @@
+.wrapper {
+  margin: 0.5rem 0;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  font-family: var(--mono, ui-monospace, monospace);
+}
+
+.corner {
+  min-width: 48px;
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-h);
+  background: var(--border);
+}
+
+.header {
+  padding: 8px 10px;
+  text-align: right;
+  font-weight: 600;
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  background: var(--code-bg);
+}
+
+.rowLabel {
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 500;
+  background: var(--border);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+}
+
+.cell {
+  padding: 8px 10px;
+  text-align: right;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  opacity: 0.3;
+  transition: all 0.25s ease-out;
+}
+
+.cellVisible {
+  opacity: 1;
+  background: var(--code-bg);
+  animation: cellPop 0.35s ease-out forwards;
+}
+
+@keyframes cellPop {
+  0% {
+    transform: scale(0.85);
+    background: color-mix(in srgb, var(--accent) 25%, var(--code-bg));
+  }
+  60% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+    background: var(--code-bg);
+  }
+}

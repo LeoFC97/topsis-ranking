@@ -1,0 +1,58 @@
+.container {
+  background: var(--code-bg);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 8px;
+}
+
+.description {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  font-family: var(--mono);
+}
+
+.corner {
+  min-width: 48px;
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-h);
+  background: var(--bg);
+}
+
+.rowLabel {
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 500;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.cell {
+  padding: 8px 10px;
+  text-align: right;
+  border: 1px solid var(--border);
+}
+
+.cell:hover {
+  background: var(--accent-bg);
+}

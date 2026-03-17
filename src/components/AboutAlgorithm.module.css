@@ -1,0 +1,163 @@
+.section {
+  padding: 1rem 0;
+}
+
+.title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 0.75rem;
+}
+
+.intro {
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0 0 1.5rem;
+}
+
+.intro strong {
+  color: var(--accent);
+}
+
+.flowchart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 420px;
+  margin: 0 auto 1.5rem;
+  padding: 1.5rem;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.nodeStandard,
+.nodeNovel,
+.nodeDiscard,
+.nodeCap,
+.nodeOutput {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.nodeStandard {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: var(--text-h);
+}
+
+.nodeNovel {
+  background: rgba(234, 88, 12, 0.12);
+  border: 1px solid rgba(234, 88, 12, 0.5);
+  color: var(--text-h);
+}
+
+.nodeDiscard {
+  background: rgba(220, 38, 38, 0.12);
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  color: var(--text-h);
+  font-size: 0.85rem;
+}
+
+.nodeCap {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.5);
+  color: var(--text-h);
+  font-size: 0.85rem;
+}
+
+.nodeOutput {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: var(--text-h);
+}
+
+.arrow {
+  color: var(--text);
+  font-size: 1.2rem;
+  padding: 0.25rem 0;
+}
+
+.decisionRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.diamond {
+  width: 140px;
+  height: 140px;
+  background: rgba(234, 88, 12, 0.15);
+  border: 1px solid rgba(234, 88, 12, 0.5);
+  transform: rotate(45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.diamond span {
+  transform: rotate(-45deg);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-h);
+  text-align: center;
+  max-width: 90px;
+}
+
+.sideNote {
+  font-size: 0.75rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.branchRow {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.branchLabel {
+  font-size: 0.75rem;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.legend {
+  font-size: 0.85rem;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.legendNovel {
+  color: rgba(234, 88, 12, 0.9);
+  margin-right: 0.25rem;
+}
+
+.legendStandard {
+  color: rgba(59, 130, 246, 0.9);
+  margin: 0 0.5rem 0 1rem;
+}
+
+.ref {
+  font-size: 0.85rem;
+  color: var(--text);
+  font-style: italic;
+  margin: 0;
+}
