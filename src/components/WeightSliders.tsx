@@ -1,5 +1,6 @@
 import type { ParsedData } from '../types';
 import styles from './WeightSliders.module.css';
+import { useI18n } from '../i18n';
 
 export interface WeightSlidersProps {
   data: ParsedData | null;
@@ -14,6 +15,7 @@ export function WeightSliders({
   onWeightsChange,
   disabled = false,
 }: WeightSlidersProps) {
+  const { t } = useI18n();
   if (!data || data.criteria.length === 0) {
     return null;
   }
@@ -36,11 +38,9 @@ export function WeightSliders({
 
   return (
     <section className={styles.section}>
-      <h2 className={styles.title}>
-        Pesos dos critérios
-      </h2>
+      <h2 className={styles.title}>{t('weights.title')}</h2>
       <p className={styles.subtitle}>
-        Ajuste os sliders (0–100). A soma é normalizada automaticamente.
+        {t('weights.subtitle')}
       </p>
       <div className={styles.grid}>
         {criteria.map((criterion, i) => (
@@ -67,7 +67,7 @@ export function WeightSliders({
         ))}
       </div>
       <p className={styles.sum}>
-        Soma total: {normalizedWeights.reduce((a, b) => a + b, 0).toFixed(2)} ✓
+        {t('weights.sum')}: {normalizedWeights.reduce((a, b) => a + b, 0).toFixed(2)} ✓
       </p>
     </section>
   );

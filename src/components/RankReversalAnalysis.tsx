@@ -1,14 +1,13 @@
 import { useState, useMemo } from 'react';
-import { topsis, topsisRad } from '../lib/topsis';
+import { topsis } from '../lib/topsis';
 import type { TopsisData, TopsisFullResult, TopsisResult } from '../types';
-import type { DplUplValues } from './DplUplInput';
 import styles from './RankReversalAnalysis.module.css';
+import { useI18n } from '../i18n';
 
 export interface RankReversalAnalysisProps {
   data: TopsisData;
   fullResult: TopsisFullResult;
   weights: number[];
-  dplUpl: DplUplValues | null;
 }
 
 interface RankChange {
@@ -24,8 +23,8 @@ export function RankReversalAnalysis({
   data,
   fullResult,
   weights,
-  dplUpl,
 }: RankReversalAnalysisProps) {
+  const { t } = useI18n();
   const [selectedToRemove, setSelectedToRemove] = useState<Set<string>>(new Set());
   const [analysisResult, setAnalysisResult] = useState<RankChange[] | null>(null);
 
@@ -64,9 +63,7 @@ export function RankReversalAnalysis({
       criteria: data.criteria,
       matrix: keptIdx.map((i) => [...data.matrix[i]]),
     };
-    const newResult = dplUpl
-      ? topsisRad(reducedData, normalizedWeights, dplUpl.dpl, dplUpl.upl)
-      : topsis(reducedData, normalizedWeights);
+    const newResult = topsis(reducedData, normalizedWeights);
 
     const rankMapOriginal = new Map<string, TopsisResult>();
     fullResult.ranking.forEach((r) => rankMapOriginal.set(r.alternative, r));
@@ -94,14 +91,13 @@ export function RankReversalAnalysis({
 
   return (
     <section className={styles.section}>
-      <h2 className={styles.title}>Análise de rank reversal</h2>
+      <h2 className={styles.title}>{t('rr.title')}</h2>
       <p className={styles.intro}>
-        Simule a remoção de alternativas e veja como o ranking das demais é alterado. O fenômeno de
-        rank reversal ocorre quando a ordem relativa muda ao alterar o conjunto de alternativas.
+        {t('rr.intro')}
       </p>
 
       <div className={styles.controls}>
-        <p className={styles.controlLabel}>Selecione alternativas para simular remoção:</p>
+        <p className={styles.controlLabel}>{t('rr.select')}</p>
         <div className={styles.checkboxGrid}>
           {fullResult.ranking.map((r) => (
             <label key={r.alternative} className={styles.checkboxLabel}>
@@ -122,33 +118,32 @@ export function RankReversalAnalysis({
           disabled={selectedToRemove.size === 0}
           className={styles.analyzeBtn}
         >
-          Analisar reversão de rank
+          {t('rr.button')}
         </button>
       </div>
 
       {analysisResult !== null && (
         <div className={styles.results}>
-          <h3 className={styles.resultsTitle}>Comparação de ranks</h3>
+          <h3 className={styles.resultsTitle}>{t('rr.compare')}</h3>
           {analysisResult.length === 0 ? (
-            <p className={styles.hint}>Poucas alternativas restantes para comparar (mín. 2).</p>
+            <p className={styles.hint}>{t('rr.notEnough')}</p>
           ) : (
             <>
               {reversalCount > 0 && (
                 <p className={styles.summary}>
-                  <strong>{reversalCount}</strong> alternativa{reversalCount > 1 ? 's' : ''} com
-                  reversão de rank.
+                  <strong>{reversalCount}</strong> {t('rr.reversalCount')}
                 </p>
               )}
               <div className={styles.tableWrap}>
                 <table className={styles.table}>
                   <thead>
                     <tr>
-                      <th>Alternativa</th>
-                      <th>Rank original</th>
-                      <th>Rank novo</th>
-                      <th>Variação</th>
-                      <th>Score original</th>
-                      <th>Score novo</th>
+                      <th>{t('rr.col.alt')}</th>
+                      <th>{t('rr.col.rankOld')}</th>
+                      <th>{t('rr.col.rankNew')}</th>
+                      <th>{t('rr.col.change')}</th>
+                      <th>{t('rr.col.scoreOld')}</th>
+                      <th>{t('rr.col.scoreNew')}</th>
                     </tr>
                   </thead>
                   <tbody>

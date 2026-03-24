@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useI18n } from '../i18n';
 
 const EXAMPLE_CSV_URL = '/exemplo_topsis.csv';
 
@@ -8,6 +9,7 @@ interface FileUploadProps {
 }
 
 export function FileUpload({ onFileLoaded, acceptedTypes = '.csv' }: FileUploadProps) {
+  const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,22 +45,22 @@ export function FileUpload({ onFileLoaded, acceptedTypes = '.csv' }: FileUploadP
         accept={acceptedTypes}
         onChange={handleFileChange}
         className="file-upload__input"
-        aria-label="Carregar planilha"
+        aria-label={t('upload.aria')}
       />
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
         className="file-upload__button file-upload__button--primary"
       >
-        Carregar planilha
+        {t('upload.button')}
       </button>
-      <span className="file-upload__divider">ou</span>
+      <span className="file-upload__divider">{t('upload.or')}</span>
       <button
         type="button"
         onClick={handleDownloadExample}
         className="file-upload__button file-upload__button--secondary"
       >
-        Baixar exemplo
+        {t('upload.example')}
       </button>
     </div>
   );

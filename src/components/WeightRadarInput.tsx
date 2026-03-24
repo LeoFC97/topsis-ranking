@@ -10,6 +10,7 @@ import {
 import { useMemo, useEffect } from 'react';
 import type { ParsedData } from '../types';
 import styles from './WeightRadarInput.module.css';
+import { useI18n } from '../i18n';
 
 const TOTAL = 100; // Soma fixa (equivale a 1 quando normalizado)
 
@@ -81,6 +82,7 @@ export function WeightRadarInput({
   onWeightsChange,
   disabled = false,
 }: WeightRadarInputProps) {
+  const { t } = useI18n();
   const chartData = useMemo(() => {
     if (!data || data.criteria.length === 0) return [];
     const criteria = data.criteria;
@@ -151,9 +153,9 @@ export function WeightRadarInput({
 
   return (
     <section className={styles.section}>
-      <h2 className={styles.title}>Distribuir pontos no radar</h2>
+      <h2 className={styles.title}>{t('radar.title')}</h2>
       <p className={styles.subtitle}>
-        Ajuste os sliders. A soma é sempre {TOTAL} (1 quando normalizado).
+        {t('radar.subtitle')}
       </p>
       <div className={styles.wrapper}>
         <div className={styles.chartContainer}>
@@ -176,7 +178,7 @@ export function WeightRadarInput({
                 tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 10 }}
               />
               <Radar
-                name="Pesos"
+                name={t('weights.title')}
                 dataKey="value"
                 stroke="#ef4444"
                 fill="url(#radarFill)"
@@ -191,7 +193,7 @@ export function WeightRadarInput({
                     <div className={styles.tooltip}>
                       <span>{d.fullCriterion}</span>
                       <span className={styles.tooltipValue}>
-                        {d.value.toFixed(1)} → {(d.value / TOTAL).toFixed(2)} normalizado
+                        {d.value.toFixed(1)} → {(d.value / TOTAL).toFixed(2)} {t('radar.normalized')}
                       </span>
                     </div>
                   );
@@ -201,7 +203,7 @@ export function WeightRadarInput({
           </ResponsiveContainer>
           {radarDomainMax < TOTAL && (
             <p className={styles.scaleHint}>
-              Escala ajustada: 0–{radarDomainMax} (para destacar diferenças)
+              {t('radar.scaleAdjusted')}: 0–{radarDomainMax} {t('radar.scaleForDiff')}
             </p>
           )}
         </div>
@@ -233,7 +235,7 @@ export function WeightRadarInput({
         </div>
       </div>
       <p className={styles.sum}>
-        Soma total: {sumDisplay.toFixed(1)} ✓
+        {t('radar.sum')}: {sumDisplay.toFixed(1)} ✓
       </p>
     </section>
   );
