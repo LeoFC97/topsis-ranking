@@ -2,63 +2,65 @@ import { useState, useCallback, useEffect } from 'react';
 import { AnimatedMatrixTable } from './AnimatedMatrixTable';
 import type { TopsisFullResult } from '../types';
 import styles from './TopsisAnimatedFlow.module.css';
-
-const STEPS = [
-  {
-    key: 'G',
-    title: 'Step 1: Matriz de decisão (G)',
-    formula: 'gᵢⱼ = desempenho da alternativa i no critério j',
-    description: 'Dados originais da planilha.',
-  },
-  {
-    key: 'W',
-    title: 'Pesos normalizados (W)',
-    formula: 'wⱼ = peso_j / Σ peso_k',
-    description: 'Pesos que somam 1, definidos pelo decisor.',
-  },
-  {
-    key: 'R',
-    title: 'Step 2: Matriz normalizada (R)',
-    formula: 'rᵢⱼ = gᵢⱼ / √(Σᵢ g²ᵢⱼ)',
-    description: 'Normalização vetorial de Hwang para cada coluna.',
-  },
-  {
-    key: 'T',
-    title: 'Step 3: Matriz ponderada (T)',
-    formula: 'tᵢⱼ = wⱼ · rᵢⱼ',
-    description: 'Cada coluna multiplicada pelo peso do critério.',
-  },
-  {
-    key: 'ref',
-    title: 'Step 4: PIS e NIS',
-    formula: 'PISⱼ = max(tᵢⱼ)  |  NISⱼ = min(tᵢⱼ)',
-    description: 'Ideal positivo (melhor) e negativo (pior) por critério.',
-  },
-  {
-    key: 'dist',
-    title: 'Step 5: Distâncias',
-    formula: 'dᵢ₋ = √Σ(tᵢⱼ − NISⱼ)²  |  dᵢ₊ = √Σ(tᵢⱼ − PISⱼ)²',
-    description: 'Distância euclidiana ao pior (NIS) e ao melhor (PIS).',
-  },
-  {
-    key: 'scores',
-    title: 'Step 6: Scores',
-    formula: 'Sᵢ = dᵢ₋ / (dᵢ₋ + dᵢ₊)',
-    description: 'Score de afastamento do pior. Maior = melhor ranking.',
-  },
-] as const;
+import { useI18n } from '../i18n';
 
 interface TopsisAnimatedFlowProps {
   result: TopsisFullResult;
 }
 
 export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
+  const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
 
   const { steps, alternatives, criteria } = result;
   const { matrixG, matrixR, matrixT, weights, PIS, NIS, distances } = steps;
+
+  const stepsInfo = [
+    {
+      key: 'G',
+      title: t('didactic.step1.title'),
+      formula: t('didactic.step1.formula'),
+      description: t('didactic.step1.description'),
+    },
+    {
+      key: 'W',
+      title: t('didactic.weights.title'),
+      formula: t('didactic.weights.formula'),
+      description: t('didactic.weights.description'),
+    },
+    {
+      key: 'R',
+      title: t('didactic.step2.title'),
+      formula: t('didactic.step2.formula'),
+      description: t('didactic.step2.description'),
+    },
+    {
+      key: 'T',
+      title: t('didactic.step3.title'),
+      formula: t('didactic.step3.formula'),
+      description: t('didactic.step3.description'),
+    },
+    {
+      key: 'ref',
+      title: t('didactic.step4.title'),
+      formula: t('didactic.step4.formula'),
+      description: t('didactic.step4.description'),
+    },
+    {
+      key: 'dist',
+      title: t('didactic.step5.title'),
+      formula: t('didactic.step5.formula'),
+      description: t('didactic.step5.description'),
+    },
+    {
+      key: 'scores',
+      title: t('didactic.step6.title'),
+      formula: t('didactic.step6.formula'),
+      description: t('didactic.step6.description'),
+    },
+  ] as const;
 
   const stepData = [
     { matrix: matrixG, rowLabels: alternatives, colLabels: criteria, decimals: 0 },
@@ -69,7 +71,7 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
     {
       matrix: distances.map((d) => [d.d_iw, d.d_ib]),
       rowLabels: alternatives,
-      colLabels: ['d_iw (NIS)', 'd_ib (PIS)'],
+      colLabels: [t('didactic.col.nis'), t('didactic.col.pis')],
       decimals: 4,
     },
     {
@@ -80,7 +82,7 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
     },
   ];
 
-  const totalSteps = STEPS.length;
+  const totalSteps = stepsInfo.length;
 
   const goNext = useCallback(() => {
     setCurrentStep((s) => (s < totalSteps - 1 ? s + 1 : s));
@@ -108,13 +110,13 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
   }, [currentStep, totalSteps, isPlaying]);
 
   const data = stepData[currentStep];
-  const stepInfo = STEPS[currentStep];
+  const stepInfo = stepsInfo[currentStep];
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Modo didático — cálculo animado</h2>
+      <h2 className={styles.title}>{t('didactic.title')}</h2>
       <p className={styles.subtitle}>
-        Assista o cálculo passo a passo. Use os controles ou deixe a animação rodar.
+        {t('didactic.subtitle')}
       </p>
 
       <div className={styles.controls}>
@@ -122,12 +124,12 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
           type="button"
           onClick={() => setIsPlaying(!isPlaying)}
           className={styles.playBtn}
-          title={isPlaying ? 'Pausar' : 'Reproduzir'}
+          title={isPlaying ? t('didactic.pause') : t('didactic.play')}
         >
-          {isPlaying ? '⏸ Pausar' : '▶ Reproduzir'}
+          {isPlaying ? `⏸ ${t('didactic.pause')}` : `▶ ${t('didactic.play')}`}
         </button>
         <button type="button" onClick={goPrev} disabled={currentStep === 0} className={styles.stepBtn}>
-          ‹ Anterior
+          {`‹ ${t('didactic.previous')}`}
         </button>
         <button
           type="button"
@@ -135,7 +137,7 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
           disabled={currentStep === totalSteps - 1}
           className={styles.stepBtn}
         >
-          Próximo ›
+          {`${t('didactic.next')} ›`}
         </button>
         <span className={styles.stepIndicator}>
           {currentStep + 1} / {totalSteps}
@@ -150,14 +152,14 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
       </div>
 
       <div className={styles.stepNav}>
-        {STEPS.map((s, i) => (
+        {stepsInfo.map((s, i) => (
           <button
             key={s.key}
             type="button"
             onClick={() => goToStep(i)}
             className={`${styles.stepDot} ${i === currentStep ? styles.stepDotActive : ''} ${i < currentStep ? styles.stepDotDone : ''}`}
             title={s.title}
-            aria-label={`Ir para passo ${i + 1}`}
+            aria-label={`${t('didactic.goToStep')} ${i + 1}`}
           >
             {i + 1}
           </button>

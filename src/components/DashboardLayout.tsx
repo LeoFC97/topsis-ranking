@@ -11,7 +11,7 @@ import { RankReversalAnalysis } from './RankReversalAnalysis';
 import { StatCard } from './StatCard';
 import { exportRankingToCsv, downloadFile } from '../lib/exportCsv';
 import type { TopsisData, TopsisFullResult } from '../types';
-import { useI18n, type Lang } from '../i18n';
+import { useI18n } from '../i18n';
 import styles from './DashboardLayout.module.css';
 
 export type DashboardTab =
@@ -60,7 +60,11 @@ export function DashboardLayout({
 
   const handleExportCsv = () => {
     if (!fullResult?.ranking.length) return;
-    const csv = exportRankingToCsv(fullResult.ranking);
+    const csv = exportRankingToCsv(fullResult.ranking, {
+      position: t('ranking.col.position'),
+      alternative: t('ranking.col.alternative'),
+      score: t('ranking.col.score'),
+    });
     downloadFile(csv, 'ranking_topsis.csv');
   };
 
@@ -70,22 +74,6 @@ export function DashboardLayout({
         <div className={styles.sidebarHeader}>
           <h1 className={styles.logo}>TOPSIS</h1>
           <span className={styles.subtitle}>{t('app.subtitle')}</span>
-          <div className={styles.langWrap}>
-            <label htmlFor="lang" className={styles.langLabel}>
-              {t('lang.label')}
-            </label>
-            <select
-              id="lang"
-              value={lang}
-              onChange={(e) => setLang(e.target.value as Lang)}
-              className={styles.langSelect}
-            >
-              <option value="pt">{t('lang.pt')}</option>
-              <option value="en">{t('lang.en')}</option>
-              <option value="zh">{t('lang.zh')}</option>
-              <option value="es">{t('lang.es')}</option>
-            </select>
-          </div>
         </div>
 
         <nav className={styles.nav}>
@@ -116,6 +104,50 @@ export function DashboardLayout({
       </aside>
 
       <main className={styles.main}>
+        <div className={styles.mainTopBar}>
+          <div className={styles.mainTopSpacer} />
+          <div className={styles.langMainWrap}>
+            <span className={styles.langMainLabel}>{t('lang.label')}</span>
+            <div className={styles.langFlagGroup} role="group" aria-label={t('lang.label')}>
+              <button
+                type="button"
+                onClick={() => setLang('pt')}
+                className={`${styles.langFlagBtn} ${lang === 'pt' ? styles.langFlagBtnActive : ''}`}
+                title={t('lang.pt')}
+                aria-label={t('lang.pt')}
+              >
+                <span aria-hidden>🇧🇷</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang('en')}
+                className={`${styles.langFlagBtn} ${lang === 'en' ? styles.langFlagBtnActive : ''}`}
+                title={t('lang.en')}
+                aria-label={t('lang.en')}
+              >
+                <span aria-hidden>🇺🇸</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang('zh')}
+                className={`${styles.langFlagBtn} ${lang === 'zh' ? styles.langFlagBtnActive : ''}`}
+                title={t('lang.zh')}
+                aria-label={t('lang.zh')}
+              >
+                <span aria-hidden>🇨🇳</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang('es')}
+                className={`${styles.langFlagBtn} ${lang === 'es' ? styles.langFlagBtnActive : ''}`}
+                title={t('lang.es')}
+                aria-label={t('lang.es')}
+              >
+                <span aria-hidden>🇪🇸</span>
+              </button>
+            </div>
+          </div>
+        </div>
         {data && (
           <div className={styles.stats}>
             <StatCard

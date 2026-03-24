@@ -11,6 +11,7 @@ import {
   Legend,
 } from 'recharts';
 import type { TopsisResult } from '../types';
+import { useI18n } from '../i18n';
 
 interface RankingBarChartProps {
   ranking: TopsisResult[];
@@ -23,6 +24,7 @@ const COLORS = [
 ];
 
 export function RankingBarChart({ ranking }: RankingBarChartProps) {
+  const { t } = useI18n();
   const data = ranking.map((r, i) => ({
     name: r.alternative,
     score: r.score,
@@ -35,9 +37,9 @@ export function RankingBarChart({ ranking }: RankingBarChartProps) {
 
   return (
     <div className="chart-container">
-      <h3 className="chart-title">Ranking por Score</h3>
+      <h3 className="chart-title">{t('bar.title')}</h3>
       <p className="chart-subtitle">
-        Quanto maior o score, melhor a posição. Linhas: limite superior (melhor) e inferior (pior).
+        {t('bar.subtitle')}
       </p>
       <ResponsiveContainer width="100%" height={320}>
         <BarChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 60 }}>
@@ -63,7 +65,7 @@ export function RankingBarChart({ ranking }: RankingBarChartProps) {
             formatter={(value, _name, props) => {
               const v = typeof value === 'number' ? value : 0;
               const rank = props?.payload?.rank ?? 0;
-              return [`${v.toFixed(4)} (#${rank}º)`, 'Score'];
+              return [`${v.toFixed(4)} (#${rank})`, t('ranking.col.score')];
             }}
           />
           <ReferenceLine
@@ -71,16 +73,16 @@ export function RankingBarChart({ ranking }: RankingBarChartProps) {
             stroke="#22c55e"
             strokeDasharray="5 5"
             strokeWidth={2}
-            label={{ value: 'Limite sup.', position: 'right', fill: '#22c55e' }}
+            label={{ value: t('bar.upperLimit'), position: 'right', fill: '#22c55e' }}
           />
           <ReferenceLine
             y={minScore}
             stroke="#ef4444"
             strokeDasharray="5 5"
             strokeWidth={2}
-            label={{ value: 'Limite inf.', position: 'right', fill: '#ef4444' }}
+            label={{ value: t('bar.lowerLimit'), position: 'right', fill: '#ef4444' }}
           />
-          <Bar dataKey="score" radius={[4, 4, 0, 0]}>
+          <Bar dataKey="score" name={t('ranking.col.score')} radius={[4, 4, 0, 0]}>
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.fill} />
             ))}

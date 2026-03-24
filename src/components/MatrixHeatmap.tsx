@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 import type { TopsisFullResult } from '../types';
+import { useI18n } from '../i18n';
 
 interface MatrixHeatmapProps {
   result: TopsisFullResult;
 }
 
 export function MatrixHeatmap({ result }: MatrixHeatmapProps) {
+  const { t } = useI18n();
   const { alternatives, criteria, steps } = result;
   const matrix = steps.matrixG;
 
@@ -47,9 +49,9 @@ export function MatrixHeatmap({ result }: MatrixHeatmapProps) {
 
   return (
     <div className="heatmap-container">
-      <h3 className="chart-title">Matriz de decisão (G) — Heatmap</h3>
+      <h3 className="chart-title">{t('heatmap.title')}</h3>
       <p className="chart-subtitle">
-        Intensidade por critério. Cores mais escuras = valores maiores. Limites Máx e Mín por coluna.
+        {t('heatmap.subtitle')}
       </p>
       <div className="heatmap-scroll">
         <table className="heatmap-table">
@@ -63,13 +65,13 @@ export function MatrixHeatmap({ result }: MatrixHeatmapProps) {
           </thead>
           <tbody>
             <tr className="heatmap-limit-row heatmap-limit-max">
-              <td className="heatmap-row-label">Máx (sup.)</td>
+              <td className="heatmap-row-label">{t('heatmap.max')}</td>
               {maxRow.map((val, j) => (
                 <td
                   key={j}
                   className="heatmap-cell heatmap-cell-limit"
                   style={{ backgroundColor: getColor(val) }}
-                  title={`Máximo em ${criteria[j]}: ${val}`}
+                  title={`${t('heatmap.maxIn')} ${criteria[j]}: ${val}`}
                 >
                   {val}
                 </td>
@@ -91,13 +93,13 @@ export function MatrixHeatmap({ result }: MatrixHeatmapProps) {
               </tr>
             ))}
             <tr className="heatmap-limit-row heatmap-limit-min">
-              <td className="heatmap-row-label">Mín (inf.)</td>
+              <td className="heatmap-row-label">{t('heatmap.min')}</td>
               {minRow.map((val, j) => (
                 <td
                   key={j}
                   className="heatmap-cell heatmap-cell-limit"
                   style={{ backgroundColor: getColor(val) }}
-                  title={`Mínimo em ${criteria[j]}: ${val}`}
+                  title={`${t('heatmap.minIn')} ${criteria[j]}: ${val}`}
                 >
                   {val}
                 </td>

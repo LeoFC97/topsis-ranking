@@ -3,8 +3,15 @@ import type { TopsisResult } from '../types';
 /**
  * Exports ranking to CSV string.
  */
-export function exportRankingToCsv(ranking: TopsisResult[]): string {
-  const header = 'Posição,Alternativa,Score';
+export function exportRankingToCsv(
+  ranking: TopsisResult[],
+  headers: { position: string; alternative: string; score: string } = {
+    position: 'Position',
+    alternative: 'Alternative',
+    score: 'Score',
+  }
+): string {
+  const header = `${headers.position},${headers.alternative},${headers.score}`;
   const rows = ranking.map((r) => `${r.rank},"${r.alternative}",${r.score.toFixed(4)}`);
   return [header, ...rows].join('\n');
 }

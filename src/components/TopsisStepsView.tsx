@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { MatrixViewer } from './MatrixViewer';
 import type { TopsisFullResult } from '../types';
 import styles from './TopsisStepsView.module.css';
+import { useI18n } from '../i18n';
 
 interface TopsisStepsViewProps {
   result: TopsisFullResult;
 }
 
 export function TopsisStepsView({ result }: TopsisStepsViewProps) {
+  const { t } = useI18n();
   const [expandedStep, setExpandedStep] = useState<number | null>(0);
 
   const { steps, alternatives, criteria } = result;
@@ -16,56 +18,56 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
   const stepItems = [
     {
       key: 'G',
-      title: 'Step 1: Matriz de decisão (G)',
-      description: 'Dados originais: desempenho de cada alternativa em cada critério.',
+      title: t('steps.step1.title'),
+      description: t('steps.step1.description'),
       matrix: matrixG,
       rowLabels: alternatives,
       colLabels: criteria,
     },
     {
       key: 'weights',
-      title: 'Pesos normalizados (W)',
-      description: 'Soma = 1. Cada critério tem peso w_j.',
+      title: t('steps.weights.title'),
+      description: t('steps.weights.description'),
       matrix: [weights],
       rowLabels: ['w'],
       colLabels: criteria,
     },
     {
       key: 'R',
-      title: 'Step 2: Matriz normalizada (R)',
-      description: 'r_ij = g_ij / √(Σᵢ g²ᵢⱼ). Normalização vetorial de Hwang.',
+      title: t('steps.step2.title'),
+      description: t('steps.step2.description'),
       matrix: matrixR,
       rowLabels: alternatives,
       colLabels: criteria,
     },
     {
       key: 'T',
-      title: 'Step 3: Matriz ponderada (T)',
-      description: 't_ij = w_j · r_ij.',
+      title: t('steps.step3.title'),
+      description: t('steps.step3.description'),
       matrix: matrixT,
       rowLabels: alternatives,
       colLabels: criteria,
     },
     {
       key: 'ref',
-      title: 'Step 4: Referências PIS e NIS',
-      description: 'PIS = max por coluna (benefício), NIS = min por coluna.',
+      title: t('steps.step4.title'),
+      description: t('steps.step4.description'),
       matrix: [PIS, NIS],
       rowLabels: ['PIS', 'NIS'],
       colLabels: criteria,
     },
     {
       key: 'dist',
-      title: 'Step 5: Distâncias (d_ib, d_iw)',
-      description: 'd_ib = distância ao PIS, d_iw = distância ao NIS.',
+      title: t('steps.step5.title'),
+      description: t('steps.step5.description'),
       matrix: distances.map((d) => [d.d_ib, d.d_iw]),
       rowLabels: alternatives,
-      colLabels: ['d_ib (PIS)', 'd_iw (NIS)'],
+      colLabels: [t('steps.step5.colPIS'), t('steps.step5.colNIS')],
     },
     {
       key: 'scores',
-      title: 'Step 6: Scores (S_iw)',
-      description: 'S_iw = d_iw / (d_iw + d_ib). Maior score = melhor ranking.',
+      title: t('steps.step6.title'),
+      description: t('steps.step6.description'),
       matrix: distances.map((d) => [d.score]),
       rowLabels: alternatives,
       colLabels: ['S_iw'],
@@ -74,7 +76,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.mainTitle}>Matrizes intermediárias</h2>
+      <h2 className={styles.mainTitle}>{t('matrices.title')}</h2>
 
       {stepItems.map((item, index) => {
         const isExpanded = expandedStep === index;

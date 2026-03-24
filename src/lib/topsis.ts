@@ -1,5 +1,22 @@
 import type { TopsisData, TopsisResult, TopsisFullResult } from '../types';
 
+function minMaxNormalize(matrix: number[][]): number[][] {
+  const m = matrix.length;
+  const n = matrix[0]?.length ?? 0;
+  const mins = Array.from({ length: n }, (_, j) => Math.min(...matrix.map((row) => row[j])));
+  const maxs = Array.from({ length: n }, (_, j) => Math.max(...matrix.map((row) => row[j])));
+
+  const R: number[][] = [];
+  for (let i = 0; i < m; i++) {
+    R.push([]);
+    for (let j = 0; j < n; j++) {
+      const denom = maxs[j] - mins[j];
+      R[i][j] = denom > 0 ? (matrix[i][j] - mins[j]) / denom : 0;
+    }
+  }
+  return R;
+}
+
 /**
  * TOPSIS (Technique for Order of Preference by Similarity to Ideal Solution)
  * Based on Hwang & Yoon (1981)
@@ -15,16 +32,8 @@ export function topsis(data: TopsisData, weights: number[]): TopsisFullResult {
   const sumW = weights.reduce((a, b) => a + b, 0);
   const w = sumW > 0 ? weights.map((v) => v / sumW) : weights.map(() => 1 / n);
 
-  // Step 1: Normalize R (r_ij = g_ij / sqrt(sum_i g_ij^2))
-  const R: number[][] = [];
-  for (let i = 0; i < m; i++) {
-    R.push([]);
-    for (let j = 0; j < n; j++) {
-      const colSum = matrix.reduce((s, row) => s + row[j] * row[j], 0);
-      const denom = Math.sqrt(colSum);
-      R[i][j] = denom > 0 ? matrix[i][j] / denom : 0;
-    }
-  }
+  // Step 1: Min-Max normalization (r_ij = (g_ij - min_j) / (max_j - min_j))
+  const R = minMaxNormalize(matrix);
 
   // Step 2: Weighted T (t_ij = w_j * r_ij)
   const T: number[][] = R.map((row) => row.map((r, j) => r * w[j]));
@@ -139,16 +148,8 @@ export function topsisRad(
   const sumW = weights.reduce((a, b) => a + b, 0);
   const w = sumW > 0 ? weights.map((v) => v / sumW) : weights.map(() => 1 / n);
 
-  // Step 4: Normalize C -> R
-  const R: number[][] = [];
-  for (let i = 0; i < m; i++) {
-    R.push([]);
-    for (let j = 0; j < n; j++) {
-      const colSum = C.reduce((s, row) => s + row[j] * row[j], 0);
-      const denom = Math.sqrt(colSum);
-      R[i][j] = denom > 0 ? C[i][j] / denom : 0;
-    }
-  }
+  // Step 4: Min-Max normalization on C -> R
+  const R = minMaxNormalize(C);
 
   // Step 5: Weighted T
   const T: number[][] = R.map((row) => row.map((r, j) => r * w[j]));

@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import { useMemo } from 'react';
 import type { TopsisFullResult } from '../types';
+import { useI18n } from '../i18n';
 
 interface CriteriaRadarChartProps {
   result: TopsisFullResult;
@@ -17,6 +18,7 @@ interface CriteriaRadarChartProps {
 }
 
 export function CriteriaRadarChart({ result, topN = 5 }: CriteriaRadarChartProps) {
+  const { t } = useI18n();
   const { alternatives, criteria, steps } = result;
   const matrixT = steps.matrixT;
 
@@ -51,9 +53,9 @@ export function CriteriaRadarChart({ result, topN = 5 }: CriteriaRadarChartProps
 
   return (
     <div className="chart-container">
-      <h3 className="chart-title">Comparação por critério (matriz T)</h3>
+      <h3 className="chart-title">{t('criteriaRadar.title')}</h3>
       <p className="chart-subtitle">
-        Top {topN} alternativas. PIS (limite superior) e NIS (limite inferior) como referência.
+        {t('criteriaRadar.subtitle').replace('{topN}', String(topN))}
       </p>
       <ResponsiveContainer width="100%" height={380}>
         <RadarChart data={data}>
@@ -67,7 +69,7 @@ export function CriteriaRadarChart({ result, topN = 5 }: CriteriaRadarChartProps
             angle={90}
           />
           <Radar
-            name="PIS (limite sup.)"
+            name={t('criteriaRadar.pis')}
             dataKey="PIS"
             stroke="#059669"
             fill="#059669"
@@ -76,7 +78,7 @@ export function CriteriaRadarChart({ result, topN = 5 }: CriteriaRadarChartProps
             strokeDasharray="4 4"
           />
           <Radar
-            name="NIS (limite inf.)"
+            name={t('criteriaRadar.nis')}
             dataKey="NIS"
             stroke="#dc2626"
             fill="#dc2626"
