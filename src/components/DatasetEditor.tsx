@@ -33,7 +33,10 @@ export function DatasetEditor({ data, onChange, disabled = false }: DatasetEdito
   };
 
   const addRow = () => {
-    const alternatives = [...data.alternatives, `A${data.alternatives.length + 1}`];
+    const alternatives = [
+      ...data.alternatives,
+      t('matrix.fallbackAlt').replace('{n}', String(data.alternatives.length + 1)),
+    ];
     const matrix = [...data.matrix, data.criteria.map(() => 0)];
     onChange({ ...data, alternatives, matrix });
   };

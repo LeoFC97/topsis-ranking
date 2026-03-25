@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import styles from './AnimatedMatrixTable.module.css';
+import { useI18n } from '../i18n';
 
 interface AnimatedMatrixTableProps {
   matrix: number[][];
@@ -20,6 +21,7 @@ export function AnimatedMatrixTable({
   cellDelay = 50,
   play = true,
 }: AnimatedMatrixTableProps) {
+  const { t } = useI18n();
   const [visibleCells, setVisibleCells] = useState<Set<string>>(new Set());
   const [isComplete, setIsComplete] = useState(false);
 
@@ -67,7 +69,9 @@ export function AnimatedMatrixTable({
           <tbody>
             {matrix.map((row, i) => (
               <tr key={i}>
-                <td className={styles.rowLabel}>{rowLabels[i] ?? `A${i + 1}`}</td>
+                <td className={styles.rowLabel}>
+                  {rowLabels[i] ?? t('matrix.fallbackAlt').replace('{n}', String(i + 1))}
+                </td>
                 {row.map((val, j) => {
                   const key = `${i}-${j}`;
                   const visible = visibleCells.has(key) || isComplete;

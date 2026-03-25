@@ -84,7 +84,7 @@ export function DashboardLayout({
     <div className={styles.wrapper}>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h1 className={styles.logo}>TOPSIS</h1>
+          <h1 className={styles.logo}>{t('app.brand')}</h1>
           <span className={styles.subtitle}>{t('app.subtitle')}</span>
         </div>
 
@@ -224,14 +224,14 @@ export function DashboardLayout({
                         className={`${styles.methodBtn} ${method === 'topsis' ? styles.methodBtnActive : ''}`}
                         onClick={() => onMethodChange('topsis')}
                       >
-                        TOPSIS
+                        {t('method.topsis')}
                       </button>
                       <button
                         type="button"
                         className={`${styles.methodBtn} ${method === 'rad' ? styles.methodBtnActive : ''}`}
                         onClick={() => onMethodChange('rad')}
                       >
-                        TOPSIS-RAD
+                        {t('method.topsisRad')}
                       </button>
                     </div>
                   </div>

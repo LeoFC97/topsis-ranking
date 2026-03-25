@@ -29,9 +29,9 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       key: 'weights',
       title: t('steps.weights.title'),
       description: t('steps.weights.description'),
-      formulaLatex: 'w_j = \\frac{peso_j}{\\sum_k peso_k}',
+      formulaLatex: t('formula.weightsNorm'),
       matrix: [weights],
-      rowLabels: ['w'],
+      rowLabels: [t('matrix.label.w')],
       colLabels: criteria,
     },
     {
@@ -58,7 +58,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       description: t('steps.step4.description'),
       formulaLatex: 'PIS_j = \\max_i(t_{ij}),\\quad NIS_j = \\min_i(t_{ij})',
       matrix: [PIS, NIS],
-      rowLabels: ['PIS', 'NIS'],
+      rowLabels: [t('matrix.label.pis'), t('matrix.label.nis')],
       colLabels: criteria,
     },
     {
@@ -78,7 +78,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       formulaLatex: 'S_{iw} = \\frac{d_{iw}}{d_{iw} + d_{ib}}',
       matrix: distances.map((d) => [d.score]),
       rowLabels: alternatives,
-      colLabels: ['S_iw'],
+      colLabels: [t('matrix.label.siw')],
     },
   ];
 

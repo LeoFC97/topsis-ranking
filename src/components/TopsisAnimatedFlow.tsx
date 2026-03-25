@@ -28,7 +28,7 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
     {
       key: 'W',
       title: t('didactic.weights.title'),
-      formulaLatex: 'w_j = \\frac{peso_j}{\\sum_k peso_k}',
+      formulaLatex: t('formula.weightsNorm'),
       description: t('didactic.weights.description'),
     },
     {
@@ -66,10 +66,10 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
 
   const stepData = [
     { matrix: matrixG, rowLabels: alternatives, colLabels: criteria, decimals: 0 },
-    { matrix: [weights], rowLabels: ['w'], colLabels: criteria, decimals: 4 },
+    { matrix: [weights], rowLabels: [t('matrix.label.w')], colLabels: criteria, decimals: 4 },
     { matrix: matrixR, rowLabels: alternatives, colLabels: criteria, decimals: 4 },
     { matrix: matrixT, rowLabels: alternatives, colLabels: criteria, decimals: 4 },
-    { matrix: [PIS, NIS], rowLabels: ['PIS', 'NIS'], colLabels: criteria, decimals: 4 },
+    { matrix: [PIS, NIS], rowLabels: [t('matrix.label.pis'), t('matrix.label.nis')], colLabels: criteria, decimals: 4 },
     {
       matrix: distances.map((d) => [d.d_iw, d.d_ib]),
       rowLabels: alternatives,
@@ -79,7 +79,7 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
     {
       matrix: distances.map((d) => [d.score]),
       rowLabels: alternatives,
-      colLabels: ['S_iw'],
+      colLabels: [t('matrix.label.siw')],
       decimals: 4,
     },
   ];

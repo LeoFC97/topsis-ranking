@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { parseCSV } from './lib/parseCsv';
 import { topsis, topsisRad } from './lib/topsis';
 import { DashboardLayout } from './components/DashboardLayout';
@@ -17,7 +17,7 @@ function getDefaultDplUpl(data: TopsisData): DplUplValues {
 }
 
 export default function App() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [data, setData] = useState<TopsisData | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [weights, setWeights] = useState<number[]>([]);
@@ -25,6 +25,10 @@ export default function App() {
   const [dplUpl, setDplUpl] = useState<DplUplValues | null>(null);
   const [fullResult, setFullResult] = useState<TopsisFullResult | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = t('app.documentTitle');
+  }, [lang, t]);
 
   const handleFileLoaded = useCallback((content: string, name: string) => {
     setParseError(null);
@@ -40,9 +44,7 @@ export default function App() {
       setData(null);
       setFileName(null);
       setWeights([]);
-      setParseError(
-        t('upload.error') || 'Erro ao interpretar o CSV. Verifique o formato (cabeçalho: alternativa,c1,c2,...).'
-      );
+      setParseError(t('upload.error'));
     }
   }, [t]);
 

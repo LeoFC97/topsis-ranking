@@ -1,5 +1,6 @@
 import styles from './MatrixViewer.module.css';
 import { MathFormula } from './MathFormula';
+import { useI18n } from '../i18n';
 
 interface MatrixViewerProps {
   title: string;
@@ -20,6 +21,7 @@ export function MatrixViewer({
   colLabels,
   decimals = 4,
 }: MatrixViewerProps) {
+  const { t } = useI18n();
   return (
     <div className={styles.container}>
       {title && <h3 className={styles.title}>{title}</h3>}
@@ -38,7 +40,9 @@ export function MatrixViewer({
           <tbody>
             {matrix.map((row, i) => (
               <tr key={i}>
-                <td className={styles.rowLabel}>{rowLabels[i] ?? `A${i + 1}`}</td>
+                <td className={styles.rowLabel}>
+                  {rowLabels[i] ?? t('matrix.fallbackAlt').replace('{n}', String(i + 1))}
+                </td>
                 {row.map((val, j) => (
                   <td key={j} className={styles.cell}>
                     {val.toFixed(decimals)}
