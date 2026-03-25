@@ -40,7 +40,12 @@ export function parseCsvToTopsis(content: string): TopsisData | null {
     return null;
   }
 
-  return { alternatives, criteria, matrix };
+  return {
+    alternatives,
+    criteria,
+    matrix,
+    directions: criteria.map(() => 'benefit' as const),
+  };
 }
 
 /** Alias for parseCsvToTopsis */

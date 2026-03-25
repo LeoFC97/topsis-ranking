@@ -1,4 +1,5 @@
-import type { TopsisData } from '../types';
+import type { CriterionDirection, TopsisData } from '../types';
+import { ensureDirections } from '../lib/topsis';
 import { useI18n } from '../i18n';
 import styles from './DatasetEditor.module.css';
 
@@ -30,6 +31,12 @@ export function DatasetEditor({ data, onChange, disabled = false }: DatasetEdito
     const criteria = [...data.criteria];
     criteria[colIdx] = nextName;
     onChange({ ...data, criteria });
+  };
+
+  const updateDirection = (colIdx: number, dir: CriterionDirection) => {
+    const dirs = [...ensureDirections(data)];
+    dirs[colIdx] = dir;
+    onChange({ ...data, directions: dirs });
   };
 
   const addRow = () => {
@@ -81,6 +88,26 @@ export function DatasetEditor({ data, onChange, disabled = false }: DatasetEdito
                     disabled={disabled}
                     className={styles.textInput}
                   />
+                </th>
+              ))}
+              <th />
+            </tr>
+            <tr>
+              <th>{t('dataset.direction')}</th>
+              {data.criteria.map((_, colIdx) => (
+                <th key={`col-dir-${colIdx}`}>
+                  <select
+                    className={styles.selectInput}
+                    value={ensureDirections(data)[colIdx]}
+                    onChange={(e) =>
+                      updateDirection(colIdx, e.target.value === 'cost' ? 'cost' : 'benefit')
+                    }
+                    disabled={disabled}
+                    aria-label={`${t('dataset.direction')}: ${data.criteria[colIdx] ?? ''}`}
+                  >
+                    <option value="benefit">{t('dataset.benefit')}</option>
+                    <option value="cost">{t('dataset.cost')}</option>
+                  </select>
                 </th>
               ))}
               <th />

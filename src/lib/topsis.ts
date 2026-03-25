@@ -1,4 +1,21 @@
-import type { TopsisData, TopsisResult, TopsisFullResult } from '../types';
+import type {
+  TopsisData,
+  TopsisResult,
+  TopsisFullResult,
+  CriterionDirection,
+  NormalizationMethod,
+  TopsisComputeOptions,
+} from '../types';
+
+/** Garante um vetor de direções (benefício/custo) por critério. */
+export function ensureDirections(data: TopsisData): CriterionDirection[] {
+  const n = data.criteria.length;
+  const d = data.directions;
+  if (d && d.length === n) {
+    return d.map((x) => (x === 'cost' ? 'cost' : 'benefit'));
+  }
+  return Array.from({ length: n }, () => 'benefit' as CriterionDirection);
+}
 
 function minMaxNormalize(matrix: number[][]): number[][] {
   const m = matrix.length;
@@ -17,37 +34,91 @@ function minMaxNormalize(matrix: number[][]): number[][] {
   return R;
 }
 
-/**
- * TOPSIS (Technique for Order of Preference by Similarity to Ideal Solution)
- * Based on Hwang & Yoon (1981)
- *
- * Returns full result with intermediate matrices for visualization.
- */
-export function topsis(data: TopsisData, weights: number[]): TopsisFullResult {
-  const { alternatives, criteria, matrix } = data;
+/** Normalização vetorial (Hwang & Yoon): r_ij = x_ij / sqrt(sum_i x_ij^2). */
+function vectorNormalize(matrix: number[][]): number[][] {
   const m = matrix.length;
-  const n = matrix[0].length;
+  const n = matrix[0]?.length ?? 0;
+  const norms = Array.from({ length: n }, (_, j) => {
+    let s = 0;
+    for (let i = 0; i < m; i++) s += matrix[i][j] * matrix[i][j];
+    return Math.sqrt(s);
+  });
 
-  // Normalize weights (sum = 1)
-  const sumW = weights.reduce((a, b) => a + b, 0);
-  const w = sumW > 0 ? weights.map((v) => v / sumW) : weights.map(() => 1 / n);
+  const R: number[][] = [];
+  for (let i = 0; i < m; i++) {
+    R.push([]);
+    for (let j = 0; j < n; j++) {
+      R[i][j] = norms[j] > 0 ? matrix[i][j] / norms[j] : 0;
+    }
+  }
+  return R;
+}
 
-  // Step 1: Min-Max normalization (r_ij = (g_ij - min_j) / (max_j - min_j))
-  const R = minMaxNormalize(matrix);
+function normalizeMatrix(matrix: number[][], method: NormalizationMethod): number[][] {
+  return method === 'vector' ? vectorNormalize(matrix) : minMaxNormalize(matrix);
+}
 
-  // Step 2: Weighted T (t_ij = w_j * r_ij)
-  const T: number[][] = R.map((row) => row.map((r, j) => r * w[j]));
-
-  // Step 3: PIS and NIS (benefit criteria p_j=1: max=best, min=worst)
+function computePISNIS(
+  T: number[][],
+  directions: CriterionDirection[]
+): { PIS: number[]; NIS: number[] } {
+  const n = directions.length;
   const PIS: number[] = [];
   const NIS: number[] = [];
   for (let j = 0; j < n; j++) {
     const col = T.map((row) => row[j]);
-    PIS.push(Math.max(...col));
-    NIS.push(Math.min(...col));
+    if (directions[j] === 'benefit') {
+      PIS.push(Math.max(...col));
+      NIS.push(Math.min(...col));
+    } else {
+      PIS.push(Math.min(...col));
+      NIS.push(Math.max(...col));
+    }
   }
+  return { PIS, NIS };
+}
 
-  // Step 4 & 5: Distances and scores
+/** UPL/DPL por defeito: benefício — UPL no mínimo da coluna e DPL no máximo; custo — o simétrico. */
+export function defaultDplUplValues(data: TopsisData): { dpl: number[]; upl: number[] } {
+  const n = data.criteria.length;
+  const dirs = ensureDirections(data);
+  const upl = Array.from({ length: n }, (_, j) => {
+    const col = data.matrix.map((row) => row[j]);
+    return dirs[j] === 'benefit' ? Math.min(...col) : Math.max(...col);
+  });
+  const dpl = Array.from({ length: n }, (_, j) => {
+    const col = data.matrix.map((row) => row[j]);
+    return dirs[j] === 'benefit' ? Math.max(...col) : Math.min(...col);
+  });
+  return { dpl, upl };
+}
+
+/**
+ * TOPSIS (Technique for Order of Preference by Similarity to Ideal Solution)
+ * Based on Hwang & Yoon (1981)
+ *
+ * `options`: normalização (Min–Max ou vetorial) e direção por critério (benefício/custo).
+ */
+export function topsis(
+  data: TopsisData,
+  weights: number[],
+  options?: Partial<TopsisComputeOptions>
+): TopsisFullResult {
+  const directions = options?.directions ?? ensureDirections(data);
+  const normalization = options?.normalization ?? 'minmax';
+  const compute: TopsisComputeOptions = { normalization, directions };
+
+  const { alternatives, criteria, matrix } = data;
+  const m = matrix.length;
+  const n = matrix[0].length;
+
+  const sumW = weights.reduce((a, b) => a + b, 0);
+  const w = sumW > 0 ? weights.map((v) => v / sumW) : weights.map(() => 1 / n);
+
+  const R = normalizeMatrix(matrix, normalization);
+  const T: number[][] = R.map((row) => row.map((r, j) => r * w[j]));
+  const { PIS, NIS } = computePISNIS(T, directions);
+
   const distances: { d_ib: number; d_iw: number; score: number }[] = [];
   const results: TopsisResult[] = [];
   for (let i = 0; i < m; i++) {
@@ -64,7 +135,6 @@ export function topsis(data: TopsisData, weights: number[]): TopsisFullResult {
     results.push({ alternative: alternatives[i], score, rank: 0 });
   }
 
-  // Step 6: Rank by score descending
   results.sort((a, b) => b.score - a.score);
   results.forEach((r, i) => {
     r.rank = i + 1;
@@ -74,6 +144,7 @@ export function topsis(data: TopsisData, weights: number[]): TopsisFullResult {
     ranking: results,
     alternatives,
     criteria,
+    compute,
     steps: {
       weights: w,
       matrixG: matrix.map((row) => [...row]),
@@ -87,27 +158,33 @@ export function topsis(data: TopsisData, weights: number[]): TopsisFullResult {
 }
 
 /**
- * TOPSIS-RAD: variante que mitiga outliers usando DPL e UPL.
- * DPL (Desired Performance Levels): limita valores acima do desejado.
- * UPL (Unaccepted Performance Levels): exclui alternativas abaixo do mínimo.
- * Ref: artigo TOPSIS-RAD.
+ * TOPSIS-RAD: UPL filtra alternativas; DPL constrói matriz C antes da normalização.
+ * Compatível com o apêndice: comparações UPL/DPL dependem de benefício vs custo.
  */
 export function topsisRad(
   data: TopsisData,
   weights: number[],
   dpl: number[],
-  upl: number[]
+  upl: number[],
+  options?: Partial<TopsisComputeOptions>
 ): TopsisFullResult {
+  const directions = options?.directions ?? ensureDirections(data);
+  const normalization = options?.normalization ?? 'minmax';
+  const compute: TopsisComputeOptions = { normalization, directions };
+
   const { alternatives, criteria, matrix } = data;
   const n = matrix[0].length;
 
-  // Step 3*.i: Filtrar alternativas qualificadas (a_ij >= u_j para todo j)
   const qualifiedIdx: number[] = [];
   const excludedAlternatives: string[] = [];
   for (let i = 0; i < matrix.length; i++) {
     let qualified = true;
     for (let j = 0; j < n; j++) {
-      if (matrix[i][j] < upl[j]) {
+      const ok =
+        directions[j] === 'benefit'
+          ? matrix[i][j] >= upl[j]
+          : matrix[i][j] <= upl[j];
+      if (!ok) {
         qualified = false;
         excludedAlternatives.push(alternatives[i]);
         break;
@@ -119,13 +196,19 @@ export function topsisRad(
   const qualifiedAlternatives = qualifiedIdx.map((i) => alternatives[i]);
   const qualifiedMatrix = qualifiedIdx.map((i) => matrix[i].map((v) => v));
 
+  const sumW0 = weights.reduce((a, b) => a + b, 0);
+  const w0 = sumW0 > 0 ? weights.map((v) => v / sumW0) : weights.map(() => 1 / n);
+
   if (qualifiedMatrix.length === 0) {
     return {
       ranking: [],
       alternatives: qualifiedAlternatives,
       criteria,
+      compute,
+      isRad: true,
+      excludedAlternatives,
       steps: {
-        weights: weights.map((w) => w / weights.reduce((a, b) => a + b, 0)),
+        weights: w0,
         matrixG: [],
         matrixR: [],
         matrixT: [],
@@ -133,37 +216,26 @@ export function topsisRad(
         NIS: [],
         distances: [],
       },
-      excludedAlternatives,
     };
   }
 
-  // Step 3*.ii: Construir matriz C (cap em DPL: se x_ij >= d_j então c_ij = d_j)
   const C: number[][] = qualifiedMatrix.map((row) =>
-    row.map((val, j) => (val >= dpl[j] ? dpl[j] : val))
+    row.map((val, j) =>
+      directions[j] === 'benefit'
+        ? Math.min(val, dpl[j])
+        : Math.max(val, dpl[j])
+    )
   );
 
   const m = C.length;
 
-  // Normalize weights
   const sumW = weights.reduce((a, b) => a + b, 0);
   const w = sumW > 0 ? weights.map((v) => v / sumW) : weights.map(() => 1 / n);
 
-  // Step 4: Min-Max normalization on C -> R
-  const R = minMaxNormalize(C);
-
-  // Step 5: Weighted T
+  const R = normalizeMatrix(C, normalization);
   const T: number[][] = R.map((row) => row.map((r, j) => r * w[j]));
+  const { PIS, NIS } = computePISNIS(T, directions);
 
-  // Step 6: PIS and NIS
-  const PIS: number[] = [];
-  const NIS: number[] = [];
-  for (let j = 0; j < n; j++) {
-    const col = T.map((row) => row[j]);
-    PIS.push(Math.max(...col));
-    NIS.push(Math.min(...col));
-  }
-
-  // Step 7 & 8: Distances and scores
   const distances: { d_ib: number; d_iw: number; score: number }[] = [];
   const results: TopsisResult[] = [];
   for (let i = 0; i < m; i++) {
@@ -189,6 +261,8 @@ export function topsisRad(
     ranking: results,
     alternatives: qualifiedAlternatives,
     criteria,
+    compute,
+    isRad: true,
     steps: {
       weights: w,
       matrixG: C.map((row) => [...row]),

@@ -73,12 +73,17 @@
 }
 
 .textInput,
-.numberInput {
+.numberInput,
+.selectInput {
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: #fff;
-  color: #111827;
+  background: var(--bg);
+  color: var(--text-h);
   padding: 0.3rem 0.35rem;
   font-size: 0.82rem;
+}
+
+.selectInput {
+  cursor: pointer;
 }

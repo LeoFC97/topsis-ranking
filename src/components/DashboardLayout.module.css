@@ -257,6 +257,74 @@
   margin-top: 1rem;
 }
 
+.advanced {
+  margin-top: 1rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.advancedSummary {
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-h);
+  list-style: none;
+}
+
+.advancedSummary::-webkit-details-marker {
+  display: none;
+}
+
+.advancedSummary::before {
+  content: '▸ ';
+  color: var(--accent);
+}
+
+.advanced[open] .advancedSummary::before {
+  content: '▾ ';
+}
+
+.advancedBody {
+  margin-top: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.advancedLabel {
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
+.advancedSelect {
+  max-width: 280px;
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 0.88rem;
+}
+
+.advancedHint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.computeBanner {
+  margin: 0.45rem 0 0;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.8rem;
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+}
+
 .methodSection {
   margin-top: 0.9rem;
   display: flex;

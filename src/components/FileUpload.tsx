@@ -30,6 +30,9 @@ export function FileUpload({ onFileLoaded, acceptedTypes = '.csv' }: FileUploadP
     if (!file) return;
 
     const reader = new FileReader();
+    reader.onerror = () => {
+      show(t('upload.readError'));
+    };
     reader.onload = (event) => {
       const content = event.target?.result as string;
       if (content) {

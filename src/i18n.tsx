@@ -37,6 +37,7 @@ const translations: Record<Lang, Dict> = {
     'data.reset': '⚖️ Redistribuir pesos',
     'data.resetTitle': 'Todos os critérios com peso igual',
     'data.calculate': 'Calcular ranking',
+    'data.shortcutHint': 'Atalho: Ctrl+Enter ou ⌘+Enter',
     'dataset.title': 'Editor do dataset',
     'dataset.subtitle': 'Edite nomes e valores diretamente na tabela. Depois, recalcule o ranking.',
     'dataset.alt': 'Alternativa',
@@ -44,6 +45,9 @@ const translations: Record<Lang, Dict> = {
     'dataset.actions': 'Ações',
     'dataset.addRow': '+ Adicionar linha',
     'dataset.removeRow': 'Remover',
+    'dataset.direction': 'Direção',
+    'dataset.benefit': 'Benefício',
+    'dataset.cost': 'Custo',
     'method.topsis': 'TOPSIS',
     'method.topsisRad': 'TOPSIS-RAD',
     'matrix.label.pis': 'PIS',
@@ -60,6 +64,8 @@ const translations: Record<Lang, Dict> = {
     'rad.method.b': 'b) e (UPL): fronteira inaceitável inferior.',
     'rad.method.pLabel': 'p (DPL) - superior',
     'rad.method.eLabel': 'e (UPL) - inferior',
+    'rad.method.eLabelCost': 'e (UPL) — máximo aceitável',
+    'rad.method.pLabelCost': 'p (DPL) — desejado',
     'rad.method.upl': 'UPL',
     'rad.method.dpl': 'DPL',
 
@@ -99,10 +105,14 @@ const translations: Record<Lang, Dict> = {
     'steps.step2.title': 'Passo 2: Matriz normalizada (R)',
     'steps.step2.description':
       'Min-Max: r_ij = (g_ij - min_j) / (max_j - min_j), onde min_j = menor valor da coluna j e max_j = maior valor da coluna j. O resultado fica em [0, 1].',
+    'steps.step2.descriptionVector':
+      'Normalização vetorial (Hwang & Yoon): para cada coluna j, r_ij = g_ij / sqrt(sum_i g_ij²). As colunas ficam com norma euclidiana 1.',
     'steps.step3.title': 'Passo 3: Matriz ponderada (T)',
     'steps.step3.description': 't_ij = w_j * r_ij.',
     'steps.step4.title': 'Passo 4: Referências PIS e NIS',
     'steps.step4.description': 'PIS = max por coluna (benefício), NIS = min por coluna.',
+    'steps.step4.descriptionMixed':
+      'Por critério j: em benefício, PIS_j = max_i(t_ij) e NIS_j = min_i(t_ij); em custo, PIS_j = min_i(t_ij) e NIS_j = max_i(t_ij).',
     'steps.step5.title': 'Passo 5: Distâncias (d_ib, d_iw)',
     'steps.step5.description': 'd_ib = distância ao PIS, d_iw = distância ao NIS.',
     'steps.step5.colPIS': 'd_ib (PIS)',
@@ -130,12 +140,16 @@ const translations: Record<Lang, Dict> = {
     'didactic.step2.formula':
       'r_ij = (g_ij - min_j) / (max_j - min_j), com min_j = min_i(g_ij) e max_j = max_i(g_ij)',
     'didactic.step2.description': 'Escalonamento Min-Max por coluna, com saída na faixa [0, 1].',
+    'didactic.step2.descriptionVector':
+      'Cada coluna da matriz G é dividida pela norma euclidiana da coluna (vetor unitário por critério).',
     'didactic.step3.title': 'Passo 3: Matriz ponderada (T)',
     'didactic.step3.formula': 't_ij = w_j * r_ij',
     'didactic.step3.description': 'Cada coluna multiplicada pelo peso do critério.',
     'didactic.step4.title': 'Passo 4: PIS e NIS',
     'didactic.step4.formula': 'PIS_j = max(t_ij) | NIS_j = min(t_ij)',
     'didactic.step4.description': 'Ideal positivo (melhor) e negativo (pior) por critério.',
+    'didactic.step4.descriptionMixed':
+      'Com critérios de custo: PIS usa o melhor valor por coluna (mínimo no custo) e NIS o pior (máximo no custo).',
     'didactic.step5.title': 'Passo 5: Distâncias',
     'didactic.step5.formula': 'd_i- = sqrt(sum(t_ij - NIS_j)^2) | d_i+ = sqrt(sum(t_ij - PIS_j)^2)',
     'didactic.step5.description': 'Distância euclidiana ao pior (NIS) e ao melhor (PIS).',
@@ -153,6 +167,7 @@ const translations: Record<Lang, Dict> = {
     'upload.or': 'ou',
     'upload.aria': 'Carregar planilha',
     'upload.error': 'Erro ao interpretar o CSV. Verifique o formato (cabeçalho: alternativa,c1,c2,...).',
+    'upload.readError': 'Não foi possível ler o ficheiro.',
     'template.default': 'Exemplo geral',
     'template.cars': 'Carros',
     'template.health': 'Saúde',
@@ -205,6 +220,17 @@ const translations: Record<Lang, Dict> = {
     'menu.open': 'Abrir menu de navegação',
     'menu.close': 'Fechar menu',
     'toast.templateError': 'Não foi possível carregar o modelo. Tente novamente.',
+
+    'advanced.title': 'Opções avançadas (algoritmo)',
+    'advanced.normalization': 'Normalização',
+    'advanced.minmax': 'Min–Max (por coluna)',
+    'advanced.vector': 'Vetorial (Hwang & Yoon)',
+    'advanced.hint':
+      'A normalização vetorial segue o apêndice do artigo. Min–Max mantém as matrizes didáticas na escala [0, 1]. Benefício/custo altera UPL, DPL e ideais PIS/NIS.',
+    'advanced.activeVector': 'Normalização ativa: vetorial',
+    'advanced.activeMinmax': 'Normalização ativa: Min–Max',
+    'advanced.activeMixedDir': 'Critérios: benefício e custo',
+    'advanced.activeBenefitOnly': 'Critérios: só benefício',
 
     'flowchartRad.title': 'Fluxo TOPSIS-RAD (como no artigo)',
     'flowchartRad.note':
@@ -260,6 +286,7 @@ const translations: Record<Lang, Dict> = {
     'data.reset': '⚖️ Redistribute weights',
     'data.resetTitle': 'All criteria with equal weight',
     'data.calculate': 'Calculate ranking',
+    'data.shortcutHint': 'Shortcut: Ctrl+Enter or ⌘+Enter',
     'dataset.title': 'Dataset editor',
     'dataset.subtitle': 'Edit names and values directly in the table, then recalculate ranking.',
     'dataset.alt': 'Alternative',
@@ -267,6 +294,9 @@ const translations: Record<Lang, Dict> = {
     'dataset.actions': 'Actions',
     'dataset.addRow': '+ Add row',
     'dataset.removeRow': 'Remove',
+    'dataset.direction': 'Direction',
+    'dataset.benefit': 'Benefit',
+    'dataset.cost': 'Cost',
     'method.topsis': 'TOPSIS',
     'method.topsisRad': 'TOPSIS-RAD',
     'matrix.label.pis': 'PIS',
@@ -283,6 +313,8 @@ const translations: Record<Lang, Dict> = {
     'rad.method.b': 'b) e (UPL): unacceptable lower boundary.',
     'rad.method.pLabel': 'p (DPL) - upper',
     'rad.method.eLabel': 'e (UPL) - lower',
+    'rad.method.eLabelCost': 'e (UPL) — max acceptable',
+    'rad.method.pLabelCost': 'p (DPL) — desired',
     'rad.method.upl': 'UPL',
     'rad.method.dpl': 'DPL',
     'ranking.title': 'Final ranking',
@@ -317,10 +349,14 @@ const translations: Record<Lang, Dict> = {
     'steps.step2.title': 'Step 2: Normalized matrix (R)',
     'steps.step2.description':
       'Min-Max: r_ij = (g_ij - min_j) / (max_j - min_j), where min_j is the smallest value in column j and max_j is the largest value in column j. Output is in [0, 1].',
+    'steps.step2.descriptionVector':
+      'Vector normalization (Hwang & Yoon): for each column j, r_ij = g_ij / sqrt(sum_i g_ij²). Columns have Euclidean norm 1.',
     'steps.step3.title': 'Step 3: Weighted matrix (T)',
     'steps.step3.description': 't_ij = w_j * r_ij.',
     'steps.step4.title': 'Step 4: PIS and NIS references',
     'steps.step4.description': 'PIS = column max (benefit), NIS = column min.',
+    'steps.step4.descriptionMixed':
+      'Per criterion j: for benefit, PIS_j = max_i(t_ij) and NIS_j = min_i(t_ij); for cost, PIS_j = min_i(t_ij) and NIS_j = max_i(t_ij).',
     'steps.step5.title': 'Step 5: Distances (d_ib, d_iw)',
     'steps.step5.description': 'd_ib = distance to PIS, d_iw = distance to NIS.',
     'steps.step5.colPIS': 'd_ib (PIS)',
@@ -347,12 +383,16 @@ const translations: Record<Lang, Dict> = {
     'didactic.step2.formula':
       'r_ij = (g_ij - min_j) / (max_j - min_j), with min_j = min_i(g_ij) and max_j = max_i(g_ij)',
     'didactic.step2.description': 'Min-Max scaling per column, with output in [0, 1].',
+    'didactic.step2.descriptionVector':
+      'Each column of G is divided by its Euclidean norm (unit vector per criterion).',
     'didactic.step3.title': 'Step 3: Weighted matrix (T)',
     'didactic.step3.formula': 't_ij = w_j * r_ij',
     'didactic.step3.description': 'Each column multiplied by criterion weight.',
     'didactic.step4.title': 'Step 4: PIS and NIS',
     'didactic.step4.formula': 'PIS_j = max(t_ij) | NIS_j = min(t_ij)',
     'didactic.step4.description': 'Positive ideal (best) and negative ideal (worst) by criterion.',
+    'didactic.step4.descriptionMixed':
+      'With cost criteria: PIS uses the best value per column (minimum for cost) and NIS the worst (maximum for cost).',
     'didactic.step5.title': 'Step 5: Distances',
     'didactic.step5.formula': 'd_i- = sqrt(sum(t_ij - NIS_j)^2) | d_i+ = sqrt(sum(t_ij - PIS_j)^2)',
     'didactic.step5.description': 'Euclidean distance to worst (NIS) and best (PIS).',
@@ -369,6 +409,7 @@ const translations: Record<Lang, Dict> = {
     'upload.or': 'or',
     'upload.aria': 'Upload spreadsheet',
     'upload.error': 'Could not parse CSV. Check format (header: alternative,c1,c2,...).',
+    'upload.readError': 'Could not read the file.',
     'template.default': 'General example',
     'template.cars': 'Cars',
     'template.health': 'Health',
@@ -417,6 +458,17 @@ const translations: Record<Lang, Dict> = {
     'menu.open': 'Open navigation menu',
     'menu.close': 'Close menu',
     'toast.templateError': 'Could not load the template. Please try again.',
+
+    'advanced.title': 'Advanced (algorithm)',
+    'advanced.normalization': 'Normalization',
+    'advanced.minmax': 'Min–Max (per column)',
+    'advanced.vector': 'Vector (Hwang & Yoon)',
+    'advanced.hint':
+      'Vector normalization matches the paper appendix. Min–Max keeps didactic matrices on [0, 1]. Benefit/cost changes UPL, DPL, and PIS/NIS.',
+    'advanced.activeVector': 'Active: vector normalization',
+    'advanced.activeMinmax': 'Active: Min–Max',
+    'advanced.activeMixedDir': 'Criteria: benefit and cost',
+    'advanced.activeBenefitOnly': 'Criteria: benefit only',
 
     'flowchartRad.title': 'TOPSIS-RAD flow (paper view)',
     'flowchartRad.note':
@@ -472,6 +524,7 @@ const translations: Record<Lang, Dict> = {
     'data.reset': '⚖️ 重新分配权重',
     'data.resetTitle': '所有准则等权',
     'data.calculate': '计算排名',
+    'data.shortcutHint': '快捷键：Ctrl+Enter 或 ⌘+Enter',
     'dataset.title': '数据集编辑器',
     'dataset.subtitle': '可直接在表格中编辑名称与数值，编辑后请重新计算排名。',
     'dataset.alt': '方案',
@@ -479,6 +532,9 @@ const translations: Record<Lang, Dict> = {
     'dataset.actions': '操作',
     'dataset.addRow': '+ 添加行',
     'dataset.removeRow': '删除',
+    'dataset.direction': '方向',
+    'dataset.benefit': '效益型',
+    'dataset.cost': '成本型',
     'method.topsis': 'TOPSIS',
     'method.topsisRad': 'TOPSIS-RAD',
     'matrix.label.pis': 'PIS',
@@ -494,6 +550,8 @@ const translations: Record<Lang, Dict> = {
     'rad.method.b': 'b) e (UPL)：不可接受下边界。',
     'rad.method.pLabel': 'p (DPL) - 上边界',
     'rad.method.eLabel': 'e (UPL) - 下边界',
+    'rad.method.eLabelCost': 'e (UPL) — 可接受上限',
+    'rad.method.pLabelCost': 'p (DPL) — 期望水平',
     'rad.method.upl': 'UPL',
     'rad.method.dpl': 'DPL',
     'ranking.title': '最终排名',
@@ -527,10 +585,14 @@ const translations: Record<Lang, Dict> = {
     'steps.step2.title': '步骤 2：归一化矩阵 (R)',
     'steps.step2.description':
       'Min-Max：r_ij = (g_ij - min_j) / (max_j - min_j)，其中 min_j 为第 j 列最小值，max_j 为第 j 列最大值，结果范围为 [0, 1]。',
+    'steps.step2.descriptionVector':
+      '向量归一化（Hwang & Yoon）：对每列 j，r_ij = g_ij / sqrt(Σ_i g_ij²)，列欧氏范数为 1。',
     'steps.step3.title': '步骤 3：加权矩阵 (T)',
     'steps.step3.description': 't_ij = w_j * r_ij。',
     'steps.step4.title': '步骤 4：PIS 与 NIS 参考',
     'steps.step4.description': 'PIS = 列最大值（效益），NIS = 列最小值。',
+    'steps.step4.descriptionMixed':
+      '对每个准则 j：效益型 PIS_j = max_i(t_ij)、NIS_j = min_i(t_ij)；成本型 PIS_j = min_i(t_ij)、NIS_j = max_i(t_ij)。',
     'steps.step5.title': '步骤 5：距离 (d_ib, d_iw)',
     'steps.step5.description': 'd_ib = 到 PIS 的距离，d_iw = 到 NIS 的距离。',
     'steps.step5.colPIS': 'd_ib (PIS)',
@@ -557,12 +619,14 @@ const translations: Record<Lang, Dict> = {
     'didactic.step2.formula':
       'r_ij = (g_ij - min_j) / (max_j - min_j)，其中 min_j = min_i(g_ij)，max_j = max_i(g_ij)',
     'didactic.step2.description': '按列执行 Min-Max 归一化，输出范围为 [0, 1]。',
+    'didactic.step2.descriptionVector': '将 G 的每一列除以该列欧氏范数（每准则单位向量）。',
     'didactic.step3.title': '步骤 3：加权矩阵 (T)',
     'didactic.step3.formula': 't_ij = w_j * r_ij',
     'didactic.step3.description': '每列乘以对应准则权重。',
     'didactic.step4.title': '步骤 4：PIS 与 NIS',
     'didactic.step4.formula': 'PIS_j = max(t_ij) | NIS_j = min(t_ij)',
     'didactic.step4.description': '按准则得到正理想（最好）和负理想（最差）。',
+    'didactic.step4.descriptionMixed': '含成本型准则时：PIS 取列上最优（成本为最小），NIS 取最差（成本为最大）。',
     'didactic.step5.title': '步骤 5：距离',
     'didactic.step5.formula': 'd_i- = sqrt(sum(t_ij - NIS_j)^2) | d_i+ = sqrt(sum(t_ij - PIS_j)^2)',
     'didactic.step5.description': '到最差（NIS）与最好（PIS）的欧氏距离。',
@@ -579,6 +643,7 @@ const translations: Record<Lang, Dict> = {
     'upload.or': '或',
     'upload.aria': '上传表格',
     'upload.error': 'CSV 解析失败，请检查格式（表头：alternative,c1,c2,...）。',
+    'upload.readError': '无法读取文件。',
     'template.default': '通用示例',
     'template.cars': '汽车',
     'template.health': '健康',
@@ -627,6 +692,17 @@ const translations: Record<Lang, Dict> = {
     'menu.open': '打开导航菜单',
     'menu.close': '关闭菜单',
     'toast.templateError': '无法加载模板，请重试。',
+
+    'advanced.title': '高级选项（算法）',
+    'advanced.normalization': '归一化',
+    'advanced.minmax': 'Min–Max（按列）',
+    'advanced.vector': '向量（Hwang & Yoon）',
+    'advanced.hint':
+      '向量归一化与论文附录一致；Min–Max 保持教学矩阵在 [0,1]。效益/成本会改变 UPL、DPL 与 PIS/NIS。',
+    'advanced.activeVector': '当前：向量归一化',
+    'advanced.activeMinmax': '当前：Min–Max',
+    'advanced.activeMixedDir': '准则：效益与成本',
+    'advanced.activeBenefitOnly': '准则：仅效益型',
 
     'flowchartRad.title': 'TOPSIS-RAD 流程（与论文一致）',
     'flowchartRad.note':
@@ -682,6 +758,7 @@ const translations: Record<Lang, Dict> = {
     'data.reset': '⚖️ Redistribuir pesos',
     'data.resetTitle': 'Todos los criterios con peso igual',
     'data.calculate': 'Calcular ranking',
+    'data.shortcutHint': 'Atajo: Ctrl+Enter o ⌘+Enter',
     'dataset.title': 'Editor del dataset',
     'dataset.subtitle': 'Edita nombres y valores directamente en la tabla y luego recalcula el ranking.',
     'dataset.alt': 'Alternativa',
@@ -689,6 +766,9 @@ const translations: Record<Lang, Dict> = {
     'dataset.actions': 'Acciones',
     'dataset.addRow': '+ Agregar fila',
     'dataset.removeRow': 'Eliminar',
+    'dataset.direction': 'Dirección',
+    'dataset.benefit': 'Beneficio',
+    'dataset.cost': 'Costo',
     'method.topsis': 'TOPSIS',
     'method.topsisRad': 'TOPSIS-RAD',
     'matrix.label.pis': 'PIS',
@@ -705,6 +785,8 @@ const translations: Record<Lang, Dict> = {
     'rad.method.b': 'b) e (UPL): frontera inferior inaceptable.',
     'rad.method.pLabel': 'p (DPL) - superior',
     'rad.method.eLabel': 'e (UPL) - inferior',
+    'rad.method.eLabelCost': 'e (UPL) — máximo aceptable',
+    'rad.method.pLabelCost': 'p (DPL) — deseado',
     'rad.method.upl': 'UPL',
     'rad.method.dpl': 'DPL',
     'ranking.title': 'Ranking final',
@@ -741,10 +823,14 @@ const translations: Record<Lang, Dict> = {
     'steps.step2.title': 'Paso 2: Matriz normalizada (R)',
     'steps.step2.description':
       'Min-Max: r_ij = (g_ij - min_j) / (max_j - min_j), donde min_j es el menor valor de la columna j y max_j el mayor valor de la columna j. El resultado queda en [0, 1].',
+    'steps.step2.descriptionVector':
+      'Normalización vectorial (Hwang & Yoon): para cada columna j, r_ij = g_ij / sqrt(Σ_i g_ij²). Las columnas tienen norma euclidiana 1.',
     'steps.step3.title': 'Paso 3: Matriz ponderada (T)',
     'steps.step3.description': 't_ij = w_j * r_ij.',
     'steps.step4.title': 'Paso 4: Referencias PIS y NIS',
     'steps.step4.description': 'PIS = máximo por columna (beneficio), NIS = mínimo por columna.',
+    'steps.step4.descriptionMixed':
+      'Por criterio j: en beneficio, PIS_j = max_i(t_ij) y NIS_j = min_i(t_ij); en costo, PIS_j = min_i(t_ij) y NIS_j = max_i(t_ij).',
     'steps.step5.title': 'Paso 5: Distancias (d_ib, d_iw)',
     'steps.step5.description': 'd_ib = distancia a PIS, d_iw = distancia a NIS.',
     'steps.step5.colPIS': 'd_ib (PIS)',
@@ -772,12 +858,16 @@ const translations: Record<Lang, Dict> = {
     'didactic.step2.formula':
       'r_ij = (g_ij - min_j) / (max_j - min_j), con min_j = min_i(g_ij) y max_j = max_i(g_ij)',
     'didactic.step2.description': 'Escalado Min-Max por columna, con salida en [0, 1].',
+    'didactic.step2.descriptionVector':
+      'Cada columna de G se divide por su norma euclidiana (vector unitario por criterio).',
     'didactic.step3.title': 'Paso 3: Matriz ponderada (T)',
     'didactic.step3.formula': 't_ij = w_j * r_ij',
     'didactic.step3.description': 'Cada columna multiplicada por el peso del criterio.',
     'didactic.step4.title': 'Paso 4: PIS y NIS',
     'didactic.step4.formula': 'PIS_j = max(t_ij) | NIS_j = min(t_ij)',
     'didactic.step4.description': 'Ideal positivo (mejor) y negativo (peor) por criterio.',
+    'didactic.step4.descriptionMixed':
+      'Con criterios de costo: PIS usa el mejor valor por columna (mínimo en costo) y NIS el peor (máximo en costo).',
     'didactic.step5.title': 'Paso 5: Distancias',
     'didactic.step5.formula': 'd_i- = sqrt(sum(t_ij - NIS_j)^2) | d_i+ = sqrt(sum(t_ij - PIS_j)^2)',
     'didactic.step5.description': 'Distancia euclidiana al peor (NIS) y al mejor (PIS).',
@@ -794,6 +884,7 @@ const translations: Record<Lang, Dict> = {
     'upload.or': 'o',
     'upload.aria': 'Cargar planilla',
     'upload.error': 'Error al interpretar CSV. Verifica el formato (encabezado: alternative,c1,c2,...).',
+    'upload.readError': 'No se pudo leer el archivo.',
     'template.default': 'Ejemplo general',
     'template.cars': 'Autos',
     'template.health': 'Salud',
@@ -842,6 +933,17 @@ const translations: Record<Lang, Dict> = {
     'menu.open': 'Abrir menú de navegación',
     'menu.close': 'Cerrar menú',
     'toast.templateError': 'No se pudo cargar la plantilla. Inténtelo de nuevo.',
+
+    'advanced.title': 'Opciones avanzadas (algoritmo)',
+    'advanced.normalization': 'Normalización',
+    'advanced.minmax': 'Min–Max (por columna)',
+    'advanced.vector': 'Vectorial (Hwang & Yoon)',
+    'advanced.hint':
+      'La normalización vectorial coincide con el apéndice. Min–Max mantiene las matrices didácticas en [0, 1]. Beneficio/costo cambia UPL, DPL y PIS/NIS.',
+    'advanced.activeVector': 'Activa: vectorial',
+    'advanced.activeMinmax': 'Activa: Min–Max',
+    'advanced.activeMixedDir': 'Criterios: beneficio y costo',
+    'advanced.activeBenefitOnly': 'Criterios: solo beneficio',
 
     'flowchartRad.title': 'Flujo TOPSIS-RAD (como en el artículo)',
     'flowchartRad.note':

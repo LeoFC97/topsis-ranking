@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { topsis, topsisRad } from '../lib/topsis';
-import type { TopsisData, TopsisFullResult, TopsisResult } from '../types';
+import type { TopsisComputeOptions, TopsisData, TopsisFullResult, TopsisResult } from '../types';
+import { defaultDplUplValues } from '../lib/topsis';
 import styles from './RankReversalAnalysis.module.css';
 import { useI18n } from '../i18n';
 import type { DplUplValues } from './DplUplInput';
@@ -11,6 +12,7 @@ export interface RankReversalAnalysisProps {
   weights: number[];
   method: 'topsis' | 'rad';
   dplUpl: DplUplValues | null;
+  computeOptions: TopsisComputeOptions;
 }
 
 interface RankChange {
@@ -28,6 +30,7 @@ export function RankReversalAnalysis({
   weights,
   method,
   dplUpl,
+  computeOptions,
 }: RankReversalAnalysisProps) {
   const { t } = useI18n();
   const [selectedToRemove, setSelectedToRemove] = useState<Set<string>>(new Set());
@@ -64,21 +67,18 @@ export function RankReversalAnalysis({
       return;
     }
     const reducedData: TopsisData = {
+      ...data,
       alternatives: keptIdx.map((i) => data.alternatives[i]),
-      criteria: data.criteria,
       matrix: keptIdx.map((i) => [...data.matrix[i]]),
     };
     const cfg =
       dplUpl && dplUpl.dpl.length === data.criteria.length
         ? dplUpl
-        : {
-            upl: data.criteria.map((_, j) => Math.min(...data.matrix.map((row) => row[j]))),
-            dpl: data.criteria.map((_, j) => Math.max(...data.matrix.map((row) => row[j]))),
-          };
+        : defaultDplUplValues(reducedData);
     const newResult =
       method === 'rad'
-        ? topsisRad(reducedData, normalizedWeights, cfg.dpl, cfg.upl)
-        : topsis(reducedData, normalizedWeights);
+        ? topsisRad(reducedData, normalizedWeights, cfg.dpl, cfg.upl, computeOptions)
+        : topsis(reducedData, normalizedWeights, computeOptions);
 
     const rankMapOriginal = new Map<string, TopsisResult>();
     fullResult.ranking.forEach((r) => rankMapOriginal.set(r.alternative, r));

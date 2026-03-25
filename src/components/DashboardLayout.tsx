@@ -12,7 +12,8 @@ import { AboutAlgorithm } from './AboutAlgorithm';
 import { RankReversalAnalysis } from './RankReversalAnalysis';
 import { StatCard } from './StatCard';
 import { exportRankingToCsv, downloadFile } from '../lib/exportCsv';
-import type { TopsisData, TopsisFullResult } from '../types';
+import type { NormalizationMethod, TopsisData, TopsisFullResult } from '../types';
+import { ensureDirections } from '../lib/topsis';
 import { useI18n } from '../i18n';
 import { useTheme } from '../theme';
 import styles from './DashboardLayout.module.css';
@@ -40,6 +41,8 @@ interface DashboardLayoutProps {
   onMethodChange: (method: 'topsis' | 'rad') => void;
   onDplUplChange: (value: DplUplValues | null) => void;
   onCalculate: () => void;
+  normalization: NormalizationMethod;
+  onNormalizationChange: (n: NormalizationMethod) => void;
 }
 
 export function DashboardLayout({
@@ -56,6 +59,8 @@ export function DashboardLayout({
   onMethodChange,
   onDplUplChange,
   onCalculate,
+  normalization,
+  onNormalizationChange,
 }: DashboardLayoutProps) {
   const { lang, setLang, t } = useI18n();
   const { theme, toggle: toggleTheme } = useTheme();
@@ -97,7 +102,9 @@ export function DashboardLayout({
       alternative: t('ranking.col.alternative'),
       score: t('ranking.col.score'),
     });
-    downloadFile(csv, 'ranking_topsis.csv');
+    const d = new Date();
+    const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    downloadFile(csv, `ranking_topsis_${stamp}.csv`);
   };
 
   return (
@@ -276,6 +283,37 @@ export function DashboardLayout({
               <DatasetEditor data={data} onChange={onDataChange} disabled={!data} />
               {data && (
                 <>
+                  <details className={styles.advanced}>
+                    <summary className={styles.advancedSummary}>{t('advanced.title')}</summary>
+                    <div className={styles.advancedBody}>
+                      <label className={styles.advancedLabel} htmlFor="norm-select">
+                        {t('advanced.normalization')}
+                      </label>
+                      <select
+                        id="norm-select"
+                        className={styles.advancedSelect}
+                        value={normalization}
+                        onChange={(e) =>
+                          onNormalizationChange(e.target.value as NormalizationMethod)
+                        }
+                      >
+                        <option value="minmax">{t('advanced.minmax')}</option>
+                        <option value="vector">{t('advanced.vector')}</option>
+                      </select>
+                      <p className={styles.advancedHint}>{t('advanced.hint')}</p>
+                    </div>
+                  </details>
+                  {fullResult?.compute && (
+                    <p className={styles.computeBanner} role="status">
+                      {fullResult.compute.normalization === 'vector'
+                        ? t('advanced.activeVector')
+                        : t('advanced.activeMinmax')}
+                      {' · '}
+                      {fullResult.compute.directions.some((d) => d === 'cost')
+                        ? t('advanced.activeMixedDir')
+                        : t('advanced.activeBenefitOnly')}
+                    </p>
+                  )}
                   <div className={styles.methodSection}>
                     <span className={styles.methodLabel}>{t('rad.method.label')}</span>
                     <div className={styles.methodButtons}>
@@ -362,6 +400,7 @@ export function DashboardLayout({
                         goToTab('ranking');
                       }}
                       className={styles.calcBtn}
+                      title={t('data.shortcutHint')}
                     >
                       {t('data.calculate')}
                     </button>
@@ -415,6 +454,10 @@ export function DashboardLayout({
                 weights={weights}
                 method={method}
                 dplUpl={dplUpl}
+                computeOptions={{
+                  normalization,
+                  directions: ensureDirections(data),
+                }}
               />
             </section>
           )}

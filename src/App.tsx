@@ -1,19 +1,19 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { parseCSV } from './lib/parseCsv';
-import { topsis, topsisRad } from './lib/topsis';
+import { topsis, topsisRad, defaultDplUplValues, ensureDirections } from './lib/topsis';
 import { DashboardLayout } from './components/DashboardLayout';
-import type { TopsisData, TopsisFullResult } from './types';
+import type { TopsisData, TopsisFullResult, NormalizationMethod } from './types';
 import { useI18n } from './i18n';
 import type { DplUplValues } from './components/DplUplInput';
 import './App.css';
 
 type Method = 'topsis' | 'rad';
 
-function getDefaultDplUpl(data: TopsisData): DplUplValues {
-  const n = data.criteria.length;
-  const upl = Array.from({ length: n }, (_, j) => Math.min(...data.matrix.map((row) => row[j])));
-  const dpl = Array.from({ length: n }, (_, j) => Math.max(...data.matrix.map((row) => row[j])));
-  return { dpl, upl };
+const NORM_STORAGE_KEY = 'topsis-normalization';
+
+function readStoredNormalization(): NormalizationMethod {
+  if (typeof window === 'undefined') return 'minmax';
+  return localStorage.getItem(NORM_STORAGE_KEY) === 'vector' ? 'vector' : 'minmax';
 }
 
 export default function App() {
@@ -25,10 +25,26 @@ export default function App() {
   const [dplUpl, setDplUpl] = useState<DplUplValues | null>(null);
   const [fullResult, setFullResult] = useState<TopsisFullResult | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
+  const [normalization, setNormalization] = useState<NormalizationMethod>(readStoredNormalization);
 
   useEffect(() => {
     document.title = t('app.documentTitle');
   }, [lang, t]);
+
+  const methodNormRef = useRef<{ method: Method; normalization: NormalizationMethod } | null>(null);
+  useEffect(() => {
+    const prev = methodNormRef.current;
+    methodNormRef.current = { method, normalization };
+    if (prev === null) return;
+    if (prev.method !== method || prev.normalization !== normalization) {
+      setFullResult(null);
+    }
+  }, [method, normalization]);
+
+  const setNormalizationPersist = useCallback((n: NormalizationMethod) => {
+    setNormalization(n);
+    localStorage.setItem(NORM_STORAGE_KEY, n);
+  }, []);
 
   const handleFileLoaded = useCallback((content: string, name: string) => {
     setParseError(null);
@@ -39,7 +55,8 @@ export default function App() {
       setFileName(name);
       setWeights(parsed.criteria.map(() => 100 / parsed.criteria.length));
       setMethod('topsis');
-      setDplUpl(getDefaultDplUpl(parsed));
+      setNormalization('minmax');
+      setDplUpl(defaultDplUplValues(parsed));
     } else {
       setData(null);
       setFileName(null);
@@ -47,6 +64,12 @@ export default function App() {
       setParseError(t('upload.error'));
     }
   }, [t]);
+
+  const computeOpts = useCallback(() => {
+    if (!data) return null;
+    const dirs = ensureDirections(data);
+    return { normalization, directions: dirs };
+  }, [data, normalization]);
 
   const handleCalculate = useCallback(() => {
     if (!data) return;
@@ -57,18 +80,29 @@ export default function App() {
     const sumW = w.reduce((a, b) => a + b, 0);
     const wNorm = sumW > 0 ? w.map((v) => v / sumW) : w.map(() => 1 / data.criteria.length);
     const useRad = method === 'rad';
-    const config = dplUpl && dplUpl.dpl.length === data.criteria.length ? dplUpl : getDefaultDplUpl(data);
-    const result = useRad ? topsisRad(data, wNorm, config.dpl, config.upl) : topsis(data, wNorm);
+    const config =
+      dplUpl && dplUpl.dpl.length === data.criteria.length ? dplUpl : defaultDplUplValues(data);
+    const opts = computeOpts();
+    if (!opts) return;
+    const result = useRad
+      ? topsisRad(data, wNorm, config.dpl, config.upl, opts)
+      : topsis(data, wNorm, opts);
     setFullResult(result);
-  }, [data, weights, method, dplUpl]);
+  }, [data, weights, method, dplUpl, computeOpts]);
 
   const handleDataChange = useCallback((nextData: TopsisData) => {
-    setData(nextData);
+    setData((prev) => {
+      if (
+        !prev ||
+        prev.criteria.length !== nextData.criteria.length ||
+        JSON.stringify(ensureDirections(prev)) !== JSON.stringify(ensureDirections(nextData))
+      ) {
+        setDplUpl(defaultDplUplValues(nextData));
+      }
+      return nextData;
+    });
     setFullResult(null);
-    if (!dplUpl || dplUpl.dpl.length !== nextData.criteria.length || dplUpl.upl.length !== nextData.criteria.length) {
-      setDplUpl(getDefaultDplUpl(nextData));
-    }
-  }, [dplUpl]);
+  }, []);
 
   return (
     <DashboardLayout
@@ -78,6 +112,8 @@ export default function App() {
       weights={weights}
       method={method}
       dplUpl={dplUpl}
+      normalization={normalization}
+      onNormalizationChange={setNormalizationPersist}
       onMethodChange={setMethod}
       onDplUplChange={setDplUpl}
       onDataChange={handleDataChange}
