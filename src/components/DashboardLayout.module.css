@@ -142,6 +142,11 @@
   width: 100%;
 }
 
+.navItemWrap {
+  display: block;
+  width: 100%;
+}
+
 .navItem:hover:not(:disabled) {
   background: var(--accent-bg);
   color: var(--accent);
@@ -183,6 +188,46 @@
 
 .weightSection {
   margin-top: 1rem;
+}
+
+.methodSection {
+  margin-top: 0.9rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.methodLabel {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.methodButtons {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.methodBtn {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 0.85rem;
+  padding: 0.35rem 0.65rem;
+  cursor: pointer;
+}
+
+.methodBtnActive {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.methodHint {
+  margin: 0.45rem 0 0;
+  color: var(--text);
+  font-size: 0.85rem;
 }
 
 .weightModeToggle {

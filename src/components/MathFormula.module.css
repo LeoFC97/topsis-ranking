@@ -1,0 +1,11 @@
+.formula {
+  color: var(--text-h);
+}
+
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline-block;
+}

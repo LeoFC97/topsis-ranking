@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { AnimatedMatrixTable } from './AnimatedMatrixTable';
+import { MathFormula } from './MathFormula';
 import type { TopsisFullResult } from '../types';
 import styles from './TopsisAnimatedFlow.module.css';
 import { useI18n } from '../i18n';
@@ -21,43 +22,44 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
     {
       key: 'G',
       title: t('didactic.step1.title'),
-      formula: t('didactic.step1.formula'),
+      formulaLatex: 'g_{ij}',
       description: t('didactic.step1.description'),
     },
     {
       key: 'W',
       title: t('didactic.weights.title'),
-      formula: t('didactic.weights.formula'),
+      formulaLatex: 'w_j = \\frac{peso_j}{\\sum_k peso_k}',
       description: t('didactic.weights.description'),
     },
     {
       key: 'R',
       title: t('didactic.step2.title'),
-      formula: t('didactic.step2.formula'),
+      formulaLatex: 'r_{ij} = \\frac{g_{ij} - \\min_i(g_{ij})}{\\max_i(g_{ij}) - \\min_i(g_{ij})}',
       description: t('didactic.step2.description'),
     },
     {
       key: 'T',
       title: t('didactic.step3.title'),
-      formula: t('didactic.step3.formula'),
+      formulaLatex: 't_{ij} = w_j \\cdot r_{ij}',
       description: t('didactic.step3.description'),
     },
     {
       key: 'ref',
       title: t('didactic.step4.title'),
-      formula: t('didactic.step4.formula'),
+      formulaLatex: 'PIS_j = \\max_i(t_{ij}),\\quad NIS_j = \\min_i(t_{ij})',
       description: t('didactic.step4.description'),
     },
     {
       key: 'dist',
       title: t('didactic.step5.title'),
-      formula: t('didactic.step5.formula'),
+      formulaLatex:
+        'd_{ib} = \\sqrt{\\sum_j (t_{ij} - PIS_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - NIS_j)^2}',
       description: t('didactic.step5.description'),
     },
     {
       key: 'scores',
       title: t('didactic.step6.title'),
-      formula: t('didactic.step6.formula'),
+      formulaLatex: 'S_{iw} = \\frac{d_{iw}}{d_{iw} + d_{ib}}',
       description: t('didactic.step6.description'),
     },
   ] as const;
@@ -169,7 +171,7 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
       <div className={styles.stepContent}>
         <div className={styles.formulaBox}>
           <h3 className={styles.stepTitle}>{stepInfo.title}</h3>
-          <code className={styles.formula}>{stepInfo.formula}</code>
+          <MathFormula latex={stepInfo.formulaLatex} className={styles.formula} />
           <p className={styles.stepDesc}>{stepInfo.description}</p>
         </div>
 

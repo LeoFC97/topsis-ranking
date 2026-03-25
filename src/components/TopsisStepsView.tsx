@@ -20,6 +20,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       key: 'G',
       title: t('steps.step1.title'),
       description: t('steps.step1.description'),
+      formulaLatex: 'g_{ij}',
       matrix: matrixG,
       rowLabels: alternatives,
       colLabels: criteria,
@@ -28,6 +29,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       key: 'weights',
       title: t('steps.weights.title'),
       description: t('steps.weights.description'),
+      formulaLatex: 'w_j = \\frac{peso_j}{\\sum_k peso_k}',
       matrix: [weights],
       rowLabels: ['w'],
       colLabels: criteria,
@@ -36,6 +38,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       key: 'R',
       title: t('steps.step2.title'),
       description: t('steps.step2.description'),
+      formulaLatex: 'r_{ij} = \\frac{g_{ij} - \\min_i(g_{ij})}{\\max_i(g_{ij}) - \\min_i(g_{ij})}',
       matrix: matrixR,
       rowLabels: alternatives,
       colLabels: criteria,
@@ -44,6 +47,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       key: 'T',
       title: t('steps.step3.title'),
       description: t('steps.step3.description'),
+      formulaLatex: 't_{ij} = w_j \\cdot r_{ij}',
       matrix: matrixT,
       rowLabels: alternatives,
       colLabels: criteria,
@@ -52,6 +56,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       key: 'ref',
       title: t('steps.step4.title'),
       description: t('steps.step4.description'),
+      formulaLatex: 'PIS_j = \\max_i(t_{ij}),\\quad NIS_j = \\min_i(t_{ij})',
       matrix: [PIS, NIS],
       rowLabels: ['PIS', 'NIS'],
       colLabels: criteria,
@@ -60,6 +65,8 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       key: 'dist',
       title: t('steps.step5.title'),
       description: t('steps.step5.description'),
+      formulaLatex:
+        'd_{ib} = \\sqrt{\\sum_j (t_{ij} - PIS_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - NIS_j)^2}',
       matrix: distances.map((d) => [d.d_ib, d.d_iw]),
       rowLabels: alternatives,
       colLabels: [t('steps.step5.colPIS'), t('steps.step5.colNIS')],
@@ -68,6 +75,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       key: 'scores',
       title: t('steps.step6.title'),
       description: t('steps.step6.description'),
+      formulaLatex: 'S_{iw} = \\frac{d_{iw}}{d_{iw} + d_{ib}}',
       matrix: distances.map((d) => [d.score]),
       rowLabels: alternatives,
       colLabels: ['S_iw'],
@@ -76,8 +84,6 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.mainTitle}>{t('matrices.title')}</h2>
-
       {stepItems.map((item, index) => {
         const isExpanded = expandedStep === index;
         const rowLabels = item.rowLabels ?? alternatives;
@@ -101,6 +107,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
                 <MatrixViewer
                   title=""
                   description={item.description}
+                  formulaLatex={item.formulaLatex}
                   matrix={item.matrix}
                   rowLabels={rowLabels}
                   colLabels={colLabels}

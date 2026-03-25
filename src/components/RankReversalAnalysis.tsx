@@ -1,13 +1,16 @@
 import { useState, useMemo } from 'react';
-import { topsis } from '../lib/topsis';
+import { topsis, topsisRad } from '../lib/topsis';
 import type { TopsisData, TopsisFullResult, TopsisResult } from '../types';
 import styles from './RankReversalAnalysis.module.css';
 import { useI18n } from '../i18n';
+import type { DplUplValues } from './DplUplInput';
 
 export interface RankReversalAnalysisProps {
   data: TopsisData;
   fullResult: TopsisFullResult;
   weights: number[];
+  method: 'topsis' | 'rad';
+  dplUpl: DplUplValues | null;
 }
 
 interface RankChange {
@@ -23,6 +26,8 @@ export function RankReversalAnalysis({
   data,
   fullResult,
   weights,
+  method,
+  dplUpl,
 }: RankReversalAnalysisProps) {
   const { t } = useI18n();
   const [selectedToRemove, setSelectedToRemove] = useState<Set<string>>(new Set());
@@ -63,7 +68,17 @@ export function RankReversalAnalysis({
       criteria: data.criteria,
       matrix: keptIdx.map((i) => [...data.matrix[i]]),
     };
-    const newResult = topsis(reducedData, normalizedWeights);
+    const cfg =
+      dplUpl && dplUpl.dpl.length === data.criteria.length
+        ? dplUpl
+        : {
+            upl: data.criteria.map((_, j) => Math.min(...data.matrix.map((row) => row[j]))),
+            dpl: data.criteria.map((_, j) => Math.max(...data.matrix.map((row) => row[j]))),
+          };
+    const newResult =
+      method === 'rad'
+        ? topsisRad(reducedData, normalizedWeights, cfg.dpl, cfg.upl)
+        : topsis(reducedData, normalizedWeights);
 
     const rankMapOriginal = new Map<string, TopsisResult>();
     fullResult.ranking.forEach((r) => rankMapOriginal.set(r.alternative, r));

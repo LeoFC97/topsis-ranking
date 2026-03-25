@@ -1,0 +1,62 @@
+.section {
+  margin-top: 1rem;
+  padding: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+}
+
+.title {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+  color: var(--text-h);
+}
+
+.subtitle {
+  margin: 0 0 0.75rem;
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) 120px 120px;
+  gap: 0.6rem;
+  align-items: end;
+}
+
+.criterion {
+  color: var(--text-h);
+  font-size: 0.9rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.field span {
+  color: var(--text);
+  font-size: 0.75rem;
+}
+
+.field input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.35rem 0.45rem;
+  background: var(--code-bg);
+  color: var(--text-h);
+}
+
+@media (max-width: 768px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}

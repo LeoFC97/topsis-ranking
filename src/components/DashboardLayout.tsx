@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { FileUpload } from './FileUpload';
 import { WeightSliders } from './WeightSliders';
 import { WeightRadarInput } from './WeightRadarInput';
+import { DplUplInput, type DplUplValues } from './DplUplInput';
+import { DatasetEditor } from './DatasetEditor';
 import { RankingTable } from './RankingTable';
 import { TopsisDashboard } from './TopsisDashboard';
 import { TopsisStepsView } from './TopsisStepsView';
@@ -27,10 +29,15 @@ interface DashboardLayoutProps {
   data: TopsisData | null;
   fileName: string | null;
   weights: number[];
+  method: 'topsis' | 'rad';
+  dplUpl: DplUplValues | null;
   fullResult: TopsisFullResult | null;
   parseError: string | null;
   onFileLoaded: (content: string, name: string) => void;
+  onDataChange: (nextData: TopsisData) => void;
   onWeightsChange: (weights: number[]) => void;
+  onMethodChange: (method: 'topsis' | 'rad') => void;
+  onDplUplChange: (value: DplUplValues | null) => void;
   onCalculate: () => void;
 }
 
@@ -38,10 +45,15 @@ export function DashboardLayout({
   data,
   fileName,
   weights,
+  method,
+  dplUpl,
   fullResult,
   parseError,
   onFileLoaded,
+  onDataChange,
   onWeightsChange,
+  onMethodChange,
+  onDplUplChange,
   onCalculate,
 }: DashboardLayoutProps) {
   const { lang, setLang, t } = useI18n();
@@ -80,24 +92,36 @@ export function DashboardLayout({
           <div className={styles.navSection}>
             <span className={styles.navLabel}>{t('nav.flow')}</span>
             {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`${styles.navItem} ${activeTab === tab.id ? styles.navItemActive : ''}`}
-                disabled={
-                  (!data && tab.id !== 'dados' && tab.id !== 'sobre') ||
-                  ((tab.id === 'ranking' ||
+              (() => {
+                const disabledNoData = !data && tab.id !== 'dados' && tab.id !== 'sobre';
+                const disabledNoResult =
+                  (tab.id === 'ranking' ||
                     tab.id === 'graficos' ||
                     tab.id === 'matrizes' ||
                     tab.id === 'didatico' ||
                     tab.id === 'rankreversal') &&
-                    !fullResult)
-                }
-              >
-                <span className={styles.navIcon}>{tab.icon}</span>
-                <span>{tab.label}</span>
-              </button>
+                  !fullResult;
+                const isDisabled = disabledNoData || disabledNoResult;
+                const tooltip = disabledNoData
+                  ? t('tooltip.loadDataFirst')
+                  : disabledNoResult
+                    ? t('tooltip.calculateFirst')
+                    : '';
+
+                return (
+                  <span key={tab.id} className={styles.navItemWrap} title={tooltip}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`${styles.navItem} ${activeTab === tab.id ? styles.navItemActive : ''}`}
+                      disabled={isDisabled}
+                    >
+                      <span className={styles.navIcon}>{tab.icon}</span>
+                      <span>{tab.label}</span>
+                    </button>
+                  </span>
+                );
+              })()
             ))}
           </div>
         </nav>
@@ -189,8 +213,41 @@ export function DashboardLayout({
                   {t('data.loaded')} <strong>{fileName}</strong>
                 </p>
               )}
+              <DatasetEditor data={data} onChange={onDataChange} disabled={!data} />
               {data && (
                 <>
+                  <div className={styles.methodSection}>
+                    <span className={styles.methodLabel}>{t('rad.method.label')}</span>
+                    <div className={styles.methodButtons}>
+                      <button
+                        type="button"
+                        className={`${styles.methodBtn} ${method === 'topsis' ? styles.methodBtnActive : ''}`}
+                        onClick={() => onMethodChange('topsis')}
+                      >
+                        TOPSIS
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.methodBtn} ${method === 'rad' ? styles.methodBtnActive : ''}`}
+                        onClick={() => onMethodChange('rad')}
+                      >
+                        TOPSIS-RAD
+                      </button>
+                    </div>
+                  </div>
+                  {method === 'rad' && (
+                    <p className={styles.methodHint}>
+                      {t('rad.method.a')} {t('rad.method.b')}
+                    </p>
+                  )}
+                  {method === 'rad' && (
+                    <DplUplInput
+                      data={data}
+                      value={dplUpl}
+                      onChange={onDplUplChange}
+                      disabled={!data}
+                    />
+                  )}
                   <div className={styles.weightSection}>
                     <div className={styles.weightModeToggle}>
                       <span className={styles.weightModeLabel}>{t('data.distribute')}</span>
@@ -296,6 +353,8 @@ export function DashboardLayout({
                 data={data}
                 fullResult={fullResult}
                 weights={weights}
+                method={method}
+                dplUpl={dplUpl}
               />
             </section>
           )}

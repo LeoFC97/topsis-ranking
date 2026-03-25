@@ -1,7 +1,13 @@
-import { useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n';
 
-const EXAMPLE_CSV_URL = '/exemplo_topsis.csv';
+const TEMPLATE_OPTIONS = [
+  { id: 'default', file: '/exemplo_topsis.csv', fileName: 'exemplo_topsis.csv', nameKey: 'template.default' },
+  { id: 'cars', file: '/modelo_carros.csv', fileName: 'modelo_carros.csv', nameKey: 'template.cars' },
+  { id: 'health', file: '/modelo_saude.csv', fileName: 'modelo_saude.csv', nameKey: 'template.health' },
+  { id: 'hdi', file: '/modelo_idh.csv', fileName: 'modelo_idh.csv', nameKey: 'template.hdi' },
+  { id: 'esg', file: '/modelo_esg.csv', fileName: 'modelo_esg.csv', nameKey: 'template.esg' },
+] as const;
 
 interface FileUploadProps {
   onFileLoaded: (content: string, fileName: string) => void;
@@ -11,6 +17,11 @@ interface FileUploadProps {
 export function FileUpload({ onFileLoaded, acceptedTypes = '.csv' }: FileUploadProps) {
   const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<(typeof TEMPLATE_OPTIONS)[number]['id']>('default');
+  const selectedTemplate = useMemo(
+    () => TEMPLATE_OPTIONS.find((tpl) => tpl.id === selectedTemplateId) ?? TEMPLATE_OPTIONS[0],
+    [selectedTemplateId]
+  );
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -27,13 +38,13 @@ export function FileUpload({ onFileLoaded, acceptedTypes = '.csv' }: FileUploadP
     e.target.value = '';
   };
 
-  const handleDownloadExample = async () => {
+  const handleLoadTemplate = async () => {
     try {
-      const response = await fetch(EXAMPLE_CSV_URL);
+      const response = await fetch(selectedTemplate.file);
       const content = await response.text();
-      onFileLoaded(content, 'exemplo_topsis.csv');
+      onFileLoaded(content, selectedTemplate.fileName);
     } catch (err) {
-      console.error('Failed to load example:', err);
+      console.error('Failed to load template:', err);
     }
   };
 
@@ -55,12 +66,29 @@ export function FileUpload({ onFileLoaded, acceptedTypes = '.csv' }: FileUploadP
         {t('upload.button')}
       </button>
       <span className="file-upload__divider">{t('upload.or')}</span>
+      <div className="file-upload__templates">
+        <label htmlFor="template-select" className="file-upload__templates-label">
+          {t('upload.chooseModel')}
+        </label>
+        <select
+          id="template-select"
+          className="file-upload__select"
+          value={selectedTemplateId}
+          onChange={(e) => setSelectedTemplateId(e.target.value as (typeof TEMPLATE_OPTIONS)[number]['id'])}
+        >
+          {TEMPLATE_OPTIONS.map((tpl) => (
+            <option key={tpl.id} value={tpl.id}>
+              {t(tpl.nameKey)}
+            </option>
+          ))}
+        </select>
+      </div>
       <button
         type="button"
-        onClick={handleDownloadExample}
+        onClick={handleLoadTemplate}
         className="file-upload__button file-upload__button--secondary"
       >
-        {t('upload.example')}
+        {t('upload.loadModel')}
       </button>
     </div>
   );

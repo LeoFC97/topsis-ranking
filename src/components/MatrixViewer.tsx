@@ -1,8 +1,10 @@
 import styles from './MatrixViewer.module.css';
+import { MathFormula } from './MathFormula';
 
 interface MatrixViewerProps {
   title: string;
   description?: string;
+  formulaLatex?: string;
   matrix: number[][];
   rowLabels: string[];
   colLabels: string[];
@@ -12,6 +14,7 @@ interface MatrixViewerProps {
 export function MatrixViewer({
   title,
   description,
+  formulaLatex,
   matrix,
   rowLabels,
   colLabels,
@@ -21,6 +24,7 @@ export function MatrixViewer({
     <div className={styles.container}>
       {title && <h3 className={styles.title}>{title}</h3>}
       {description && <p className={styles.description}>{description}</p>}
+      {formulaLatex && <MathFormula latex={formulaLatex} className={styles.formula} />}
       <div className={styles.scroll}>
         <table className={styles.table}>
           <thead>
