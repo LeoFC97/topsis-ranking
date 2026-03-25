@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n';
+import { useToast } from '../toast';
 
 const TEMPLATE_OPTIONS = [
   { id: 'default', file: '/exemplo_topsis.csv', fileName: 'exemplo_topsis.csv', nameKey: 'template.default' },
@@ -16,6 +17,7 @@ interface FileUploadProps {
 
 export function FileUpload({ onFileLoaded, acceptedTypes = '.csv' }: FileUploadProps) {
   const { t } = useI18n();
+  const { show } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedTemplateId, setSelectedTemplateId] = useState<(typeof TEMPLATE_OPTIONS)[number]['id']>('default');
   const selectedTemplate = useMemo(
@@ -41,10 +43,15 @@ export function FileUpload({ onFileLoaded, acceptedTypes = '.csv' }: FileUploadP
   const handleLoadTemplate = async () => {
     try {
       const response = await fetch(selectedTemplate.file);
+      if (!response.ok) {
+        show(t('toast.templateError'));
+        return;
+      }
       const content = await response.text();
       onFileLoaded(content, selectedTemplate.fileName);
     } catch (err) {
       console.error('Failed to load template:', err);
+      show(t('toast.templateError'));
     }
   };
 

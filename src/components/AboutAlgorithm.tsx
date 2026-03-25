@@ -1,5 +1,6 @@
 import styles from './AboutAlgorithm.module.css';
 import { useI18n } from '../i18n';
+import { TopsisRadFlowchart } from './TopsisRadFlowchart';
 
 export function AboutAlgorithm() {
   const { t } = useI18n();
@@ -10,6 +11,9 @@ export function AboutAlgorithm() {
         {t('about.intro')}
       </p>
 
+      <TopsisRadFlowchart />
+
+      <h3 className={styles.subTitle}>{t('about.sectionClassic')}</h3>
       <div className={styles.flowchart}>
         <div className={styles.nodeStandard}>
           {t('about.step1')}

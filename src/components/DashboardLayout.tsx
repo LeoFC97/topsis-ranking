@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FileUpload } from './FileUpload';
 import { WeightSliders } from './WeightSliders';
 import { WeightRadarInput } from './WeightRadarInput';
@@ -14,6 +14,7 @@ import { StatCard } from './StatCard';
 import { exportRankingToCsv, downloadFile } from '../lib/exportCsv';
 import type { TopsisData, TopsisFullResult } from '../types';
 import { useI18n } from '../i18n';
+import { useTheme } from '../theme';
 import styles from './DashboardLayout.module.css';
 
 export type DashboardTab =
@@ -57,8 +58,27 @@ export function DashboardLayout({
   onCalculate,
 }: DashboardLayoutProps) {
   const { lang, setLang, t } = useI18n();
+  const { theme, toggle: toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<DashboardTab>('dados');
   const [weightInputMode, setWeightInputMode] = useState<'sliders' | 'radar'>('radar');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  const goToTab = (id: DashboardTab) => {
+    setActiveTab(id);
+    setMobileNavOpen(false);
+  };
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey) || e.key !== 'Enter') return;
+      if (!data || activeTab !== 'dados') return;
+      e.preventDefault();
+      onCalculate();
+      setActiveTab('ranking');
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [data, activeTab, onCalculate]);
 
   const tabs: { id: DashboardTab; label: string; icon: string }[] = [
     { id: 'dados', label: t('tab.data'), icon: '📁' },
@@ -82,13 +102,29 @@ export function DashboardLayout({
 
   return (
     <div className={styles.wrapper}>
-      <aside className={styles.sidebar}>
+      <a href="#main-content" className={styles.skipLink}>
+        {t('skip.content')}
+      </a>
+
+      {mobileNavOpen && (
+        <button
+          type="button"
+          className={styles.backdrop}
+          aria-label={t('menu.close')}
+          onClick={() => setMobileNavOpen(false)}
+        />
+      )}
+
+      <aside
+        id="sidebar-nav"
+        className={`${styles.sidebar} ${mobileNavOpen ? styles.sidebarOpen : ''}`}
+      >
         <div className={styles.sidebarHeader}>
           <h1 className={styles.logo}>{t('app.brand')}</h1>
           <span className={styles.subtitle}>{t('app.subtitle')}</span>
         </div>
 
-        <nav className={styles.nav}>
+        <nav className={styles.nav} aria-label={t('nav.flow')}>
           <div className={styles.navSection}>
             <span className={styles.navLabel}>{t('nav.flow')}</span>
             {tabs.map((tab) => (
@@ -112,11 +148,14 @@ export function DashboardLayout({
                   <span key={tab.id} className={styles.navItemWrap} title={tooltip}>
                     <button
                       type="button"
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => goToTab(tab.id)}
                       className={`${styles.navItem} ${activeTab === tab.id ? styles.navItemActive : ''}`}
                       disabled={isDisabled}
+                      aria-current={activeTab === tab.id ? 'page' : undefined}
                     >
-                      <span className={styles.navIcon}>{tab.icon}</span>
+                      <span className={styles.navIcon} aria-hidden>
+                        {tab.icon}
+                      </span>
                       <span>{tab.label}</span>
                     </button>
                   </span>
@@ -127,9 +166,30 @@ export function DashboardLayout({
         </nav>
       </aside>
 
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main} tabIndex={-1}>
         <div className={styles.mainTopBar}>
+          <button
+            type="button"
+            className={styles.menuToggle}
+            onClick={() => setMobileNavOpen((o) => !o)}
+            aria-expanded={mobileNavOpen}
+            aria-controls="sidebar-nav"
+            aria-label={mobileNavOpen ? t('menu.close') : t('menu.open')}
+          >
+            <span className={styles.menuToggleIcon} aria-hidden>
+              {mobileNavOpen ? '✕' : '☰'}
+            </span>
+          </button>
           <div className={styles.mainTopSpacer} />
+          <button
+            type="button"
+            className={styles.themeBtn}
+            onClick={toggleTheme}
+            title={theme === 'dark' ? t('theme.switchToLight') : t('theme.switchToDark')}
+            aria-label={theme === 'dark' ? t('theme.switchToLight') : t('theme.switchToDark')}
+          >
+            <span aria-hidden>{theme === 'dark' ? '☀️' : '🌙'}</span>
+          </button>
           <div className={styles.langMainWrap}>
             <span className={styles.langMainLabel}>{t('lang.label')}</span>
             <div className={styles.langFlagGroup} role="group" aria-label={t('lang.label')}>
@@ -299,7 +359,7 @@ export function DashboardLayout({
                       type="button"
                       onClick={() => {
                         onCalculate();
-                        setActiveTab('ranking');
+                        goToTab('ranking');
                       }}
                       className={styles.calcBtn}
                     >
