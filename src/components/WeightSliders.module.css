@@ -13,7 +13,14 @@
 .subtitle {
   font-size: 0.875rem;
   color: var(--text);
+  margin: 0 0 0.35rem;
+}
+
+.lockIntro {
+  font-size: 0.8rem;
+  color: var(--text);
   margin: 0 0 1rem;
+  line-height: 1.4;
 }
 
 .grid {
@@ -29,10 +36,19 @@
   gap: 0.25rem;
 }
 
+.itemHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
 .label {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-h);
+  flex: 1;
+  min-width: 0;
 }
 
 .sliderRow {

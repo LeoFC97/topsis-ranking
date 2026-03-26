@@ -9,77 +9,30 @@ import {
 } from 'recharts';
 import { useMemo, useEffect } from 'react';
 import type { ParsedData } from '../types';
+import {
+  redistributeWeightsWithLocks,
+  WEIGHT_TOTAL,
+  normalizeWeightsToTotal,
+} from '../lib/weightRedistribute';
+import { WeightLockToggle } from './WeightLockToggle';
 import styles from './WeightRadarInput.module.css';
 import { useI18n } from '../i18n';
-
-const TOTAL = 100; // Soma fixa (equivale a 1 quando normalizado)
 
 export interface WeightRadarInputProps {
   data: ParsedData | null;
   weights: number[];
   onWeightsChange: (weights: number[]) => void;
+  weightLocks: boolean[];
+  onWeightLocksChange: (locks: boolean[]) => void;
   disabled?: boolean;
-}
-
-/**
- * Redistribui os pesos mantendo soma = TOTAL.
- * Quando o usuário move o slider i para newVal, os outros são ajustados proporcionalmente.
- */
-function redistributeWeights(
-  current: number[],
-  index: number,
-  newVal: number
-): number[] {
-  const n = current.length;
-  const clamped = Math.max(0, Math.min(TOTAL, newVal));
-
-  if (n === 1) return [TOTAL];
-
-  const rest = TOTAL - clamped;
-  if (rest <= 0) {
-    const out = current.map(() => 0);
-    out[index] = TOTAL;
-    return out;
-  }
-
-  const currentRest = current.filter((_, i) => i !== index).reduce((a, b) => a + b, 0);
-  const out = [...current];
-  out[index] = clamped;
-
-  if (currentRest <= 0) {
-    const each = rest / (n - 1);
-    for (let i = 0; i < n; i++) {
-      if (i !== index) out[i] = each;
-    }
-  } else {
-    for (let i = 0; i < n; i++) {
-      if (i !== index) {
-        out[i] = (current[i] / currentRest) * rest;
-      }
-    }
-  }
-
-  const sum = out.reduce((a, b) => a + b, 0);
-  if (Math.abs(sum - TOTAL) > 0.01) {
-    let diff = TOTAL - sum;
-    for (let i = 0; i < n && Math.abs(diff) > 0.001; i++) {
-      if (i !== index) {
-        const adjust = diff > 0 ? Math.min(diff, 0.5) : Math.max(diff, -0.5);
-        out[i] += adjust;
-        out[i] = Math.max(0, out[i]);
-        diff -= adjust;
-      }
-    }
-    out[index] = TOTAL - out.reduce((a, b, i) => (i === index ? a : a + b), 0);
-  }
-
-  return out;
 }
 
 export function WeightRadarInput({
   data,
   weights,
   onWeightsChange,
+  weightLocks,
+  onWeightLocksChange,
   disabled = false,
 }: WeightRadarInputProps) {
   const { t } = useI18n();
@@ -89,11 +42,11 @@ export function WeightRadarInput({
     let currentWeights =
       weights.length === criteria.length
         ? [...weights]
-        : criteria.map(() => TOTAL / criteria.length);
+        : criteria.map(() => WEIGHT_TOTAL / criteria.length);
 
     const sum = currentWeights.reduce((a, b) => a + b, 0);
-    if (Math.abs(sum - TOTAL) > 0.01 && sum > 0) {
-      currentWeights = currentWeights.map((w) => (w / sum) * TOTAL);
+    if (Math.abs(sum - WEIGHT_TOTAL) > 0.01 && sum > 0) {
+      currentWeights = currentWeights.map((w) => (w / sum) * WEIGHT_TOTAL);
     }
 
     return criteria.map((c, i) => ({
@@ -109,40 +62,62 @@ export function WeightRadarInput({
     let w =
       weights.length === data.criteria.length
         ? [...weights]
-        : data.criteria.map(() => TOTAL / data.criteria.length);
+        : data.criteria.map(() => WEIGHT_TOTAL / data.criteria.length);
     const sum = w.reduce((a, b) => a + b, 0);
-    if (Math.abs(sum - TOTAL) > 0.01 && sum > 0) {
-      w = w.map((v) => (v / sum) * TOTAL);
+    if (Math.abs(sum - WEIGHT_TOTAL) > 0.01 && sum > 0) {
+      w = w.map((v) => (v / sum) * WEIGHT_TOTAL);
     }
     return w;
   }, [data, weights, chartData.length]);
 
-  // Sincroniza pesos quando vêm de outra fonte (ex: Sliders) e não somam TOTAL
+  const locksAligned = useMemo(
+    () => (data ? data.criteria.map((_, i) => weightLocks[i] ?? false) : []),
+    [data, weightLocks]
+  );
+
+  const unlockedCount = useMemo(
+    () => locksAligned.filter((l) => !l).length,
+    [locksAligned]
+  );
+
   useEffect(() => {
     if (!data || data.criteria.length < 3) return;
+    if (locksAligned.some(Boolean)) return;
     const n = data.criteria.length;
     const w =
       weights.length === n
         ? [...weights]
-        : data.criteria.map(() => TOTAL / n);
+        : data.criteria.map(() => WEIGHT_TOTAL / n);
     const sum = w.reduce((a, b) => a + b, 0);
-    if (Math.abs(sum - TOTAL) > 0.01 && sum > 0) {
-      const normalized = w.map((v) => (v / sum) * TOTAL);
+    if (Math.abs(sum - WEIGHT_TOTAL) > 0.01 && sum > 0) {
+      const normalized = w.map((v) => (v / sum) * WEIGHT_TOTAL);
       onWeightsChange(normalized);
     }
-  }, [data, weights, onWeightsChange]);
+  }, [data, weights, locksAligned, onWeightsChange]);
 
   const handleSliderChange = (index: number, value: number) => {
     if (!data) return;
-    const newWeights = redistributeWeights(currentWeights, index, value);
+    if (locksAligned[index]) return;
+    const newWeights = redistributeWeightsWithLocks(currentWeights, index, value, locksAligned);
     onWeightsChange(newWeights);
+  };
+
+  const handleToggleLock = (i: number) => {
+    if (!data) return;
+    if (locksAligned[i]) {
+      onWeightLocksChange(locksAligned.map((l, j) => (j === i ? false : l)));
+      return;
+    }
+    if (unlockedCount <= 1) return;
+    const normalized = normalizeWeightsToTotal(currentWeights, WEIGHT_TOTAL);
+    onWeightsChange(normalized);
+    onWeightLocksChange(locksAligned.map((l, j) => (j === i ? true : l)));
   };
 
   const sumDisplay = currentWeights.reduce((a, b) => a + b, 0);
 
-  // Domain dinâmico: "zoom" no intervalo dos dados para destacar diferenças
   const radarDomainMax = useMemo(() => {
-    if (currentWeights.length === 0) return TOTAL;
+    if (currentWeights.length === 0) return WEIGHT_TOTAL;
     const max = Math.max(...currentWeights);
     return Math.max(15, Math.ceil(max * 1.2));
   }, [currentWeights]);
@@ -157,6 +132,7 @@ export function WeightRadarInput({
       <p className={styles.subtitle}>
         {t('radar.subtitle')}
       </p>
+      <p className={styles.lockIntro}>{t('weights.lockIntro')}</p>
       <div className={styles.wrapper}>
         <div className={styles.chartContainer}>
           <ResponsiveContainer width="100%" height={400}>
@@ -193,7 +169,8 @@ export function WeightRadarInput({
                     <div className={styles.tooltip}>
                       <span>{d.fullCriterion}</span>
                       <span className={styles.tooltipValue}>
-                        {d.value.toFixed(1)} → {(d.value / TOTAL).toFixed(2)} {t('radar.normalized')}
+                        {d.value.toFixed(1)} → {(d.value / WEIGHT_TOTAL).toFixed(2)}{' '}
+                        {t('radar.normalized')}
                       </span>
                     </div>
                   );
@@ -201,37 +178,50 @@ export function WeightRadarInput({
               />
             </RadarChart>
           </ResponsiveContainer>
-          {radarDomainMax < TOTAL && (
+          {radarDomainMax < WEIGHT_TOTAL && (
             <p className={styles.scaleHint}>
               {t('radar.scaleAdjusted')}: 0–{radarDomainMax} {t('radar.scaleForDiff')}
             </p>
           )}
         </div>
         <div className={styles.sliders}>
-          {chartData.map((d) => (
-            <div key={d.index} className={styles.sliderRow}>
-              <label className={styles.sliderLabel} htmlFor={`radar-slider-${d.index}`}>
-                {d.fullCriterion}
-              </label>
-              <div className={styles.sliderWrap}>
-                <input
-                  id={`radar-slider-${d.index}`}
-                  type="range"
-                  min={0}
-                  max={TOTAL}
-                  step={0.5}
-                  value={d.value}
-                  onChange={(e) => handleSliderChange(d.index, Number(e.target.value))}
-                  disabled={disabled}
-                  className={styles.slider}
-                />
-                <span className={styles.sliderValue}>
-                  <span className={styles.sliderRaw}>{d.value.toFixed(0)}</span>
-                  <span className={styles.sliderNorm}>{(d.value / TOTAL).toFixed(2)}</span>
-                </span>
+          {chartData.map((d) => {
+            const locked = locksAligned[d.index] ?? false;
+            const sliderDisabled =
+              disabled || locked || unlockedCount === 1;
+            const cannotLockLast = !locked && unlockedCount <= 1;
+            return (
+              <div key={d.index} className={styles.sliderRow}>
+                <div className={styles.sliderRowHeader}>
+                  <WeightLockToggle
+                    locked={locked}
+                    disabled={disabled || cannotLockLast}
+                    onToggle={() => handleToggleLock(d.index)}
+                  />
+                  <label className={styles.sliderLabel} htmlFor={`radar-slider-${d.index}`}>
+                    {d.fullCriterion}
+                  </label>
+                </div>
+                <div className={styles.sliderWrap}>
+                  <input
+                    id={`radar-slider-${d.index}`}
+                    type="range"
+                    min={0}
+                    max={WEIGHT_TOTAL}
+                    step={0.5}
+                    value={d.value}
+                    onChange={(e) => handleSliderChange(d.index, Number(e.target.value))}
+                    disabled={sliderDisabled}
+                    className={styles.slider}
+                  />
+                  <span className={styles.sliderValue}>
+                    <span className={styles.sliderRaw}>{d.value.toFixed(0)}</span>
+                    <span className={styles.sliderNorm}>{(d.value / WEIGHT_TOTAL).toFixed(2)}</span>
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
       <p className={styles.sum}>

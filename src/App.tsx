@@ -21,6 +21,7 @@ export default function App() {
   const [data, setData] = useState<TopsisData | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [weights, setWeights] = useState<number[]>([]);
+  const [weightLocks, setWeightLocks] = useState<boolean[]>([]);
   const [method, setMethod] = useState<Method>('topsis');
   const [dplUpl, setDplUpl] = useState<DplUplValues | null>(null);
   const [fullResult, setFullResult] = useState<TopsisFullResult | null>(null);
@@ -54,6 +55,7 @@ export default function App() {
       setData(parsed);
       setFileName(name);
       setWeights(parsed.criteria.map(() => 100 / parsed.criteria.length));
+      setWeightLocks(parsed.criteria.map(() => false));
       setMethod('topsis');
       setNormalization('minmax');
       setDplUpl(defaultDplUplValues(parsed));
@@ -61,6 +63,7 @@ export default function App() {
       setData(null);
       setFileName(null);
       setWeights([]);
+      setWeightLocks([]);
       setParseError(t('upload.error'));
     }
   }, [t]);
@@ -101,6 +104,9 @@ export default function App() {
       }
       return nextData;
     });
+    setWeightLocks((prev) =>
+      nextData.criteria.map((_, i) => (i < prev.length ? prev[i] : false))
+    );
     setFullResult(null);
   }, []);
 
@@ -110,6 +116,8 @@ export default function App() {
       fileName={fileName}
       parseError={parseError}
       weights={weights}
+      weightLocks={weightLocks}
+      onWeightLocksChange={setWeightLocks}
       method={method}
       dplUpl={dplUpl}
       normalization={normalization}

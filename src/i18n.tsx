@@ -177,6 +177,12 @@ const translations: Record<Lang, Dict> = {
 
     'weights.title': 'Pesos dos critérios',
     'weights.subtitle': 'Ajuste os sliders (0-100). A soma é normalizada automaticamente.',
+    'weights.lockIntro':
+      'Cadeado fechado: peso fixo. Cadeado aberto: o peso pode mudar ao ajustar outros critérios. Com pelo menos uma trava, a soma dos pesos brutos mantém-se 100.',
+    'weights.lockHint': 'Travar peso deste critério',
+    'weights.unlockHint': 'Destravar peso deste critério',
+    'weights.lockAria': 'Travar peso do critério',
+    'weights.unlockAria': 'Destravar peso do critério',
     'weights.sum': 'Soma total',
 
     'radar.title': 'Distribuir pontos no radar',
@@ -189,8 +195,8 @@ const translations: Record<Lang, Dict> = {
     'rr.title': 'Análise de rank reversal',
     'rr.intro':
       'Simule a remoção de alternativas e veja como o ranking das demais é alterado. O fenômeno de rank reversal ocorre quando a ordem relativa muda ao alterar o conjunto de alternativas.',
-    'rr.radDplUplRecalc':
-      'No TOPSIS-RAD, DPL e UPL desta simulação são recalculados só com as alternativas restantes (mesma regra dos valores padrão ao carregar dados).',
+    'rr.radDplUplLocked':
+      'No TOPSIS-RAD, DPL e UPL desta simulação são os mesmos da análise principal (fronteiras fixas; não se recalculam ao remover alternativas).',
     'rr.select': 'Selecione alternativas para simular remoção:',
     'rr.button': 'Analisar reversão de rank',
     'rr.compare': 'Comparação de ranks',
@@ -421,6 +427,12 @@ const translations: Record<Lang, Dict> = {
     'template.esg': 'ESG',
     'weights.title': 'Criteria weights',
     'weights.subtitle': 'Adjust sliders (0-100). Sum is automatically normalized.',
+    'weights.lockIntro':
+      'Closed lock: fixed weight. Open lock: weight can change when adjusting other criteria. With at least one lock, raw weights keep sum 100.',
+    'weights.lockHint': 'Lock this criterion weight',
+    'weights.unlockHint': 'Unlock this criterion weight',
+    'weights.lockAria': 'Lock criterion weight',
+    'weights.unlockAria': 'Unlock criterion weight',
     'weights.sum': 'Total sum',
     'radar.title': 'Distribute points on radar',
     'radar.subtitle': 'Adjust sliders. Sum is always 100 (1 when normalized).',
@@ -431,8 +443,8 @@ const translations: Record<Lang, Dict> = {
     'rr.title': 'Rank reversal analysis',
     'rr.intro':
       'Simulate removing alternatives and see how the ranking of remaining ones changes. Rank reversal happens when relative order changes after changing the set of alternatives.',
-    'rr.radDplUplRecalc':
-      'In TOPSIS-RAD, DPL and UPL for this simulation are recomputed from the remaining alternatives only (same default rule as when loading data).',
+    'rr.radDplUplLocked':
+      'In TOPSIS-RAD, DPL and UPL in this simulation match the main analysis (locked boundaries; not recomputed when removing alternatives).',
     'rr.select': 'Select alternatives to simulate removal:',
     'rr.button': 'Analyze rank reversal',
     'rr.compare': 'Rank comparison',
@@ -658,6 +670,12 @@ const translations: Record<Lang, Dict> = {
     'template.esg': 'ESG',
     'weights.title': '准则权重',
     'weights.subtitle': '调整滑块（0-100），总和会自动归一化。',
+    'weights.lockIntro':
+      '闭合锁：权重固定。打开锁：调整其他准则时该权重可变。至少有一个锁定时，原始权重之和保持为 100。',
+    'weights.lockHint': '锁定该准则权重',
+    'weights.unlockHint': '解锁该准则权重',
+    'weights.lockAria': '锁定准则权重',
+    'weights.unlockAria': '解锁准则权重',
     'weights.sum': '总和',
     'radar.title': '雷达图分配权重',
     'radar.subtitle': '调整滑块。总和始终为 100（归一化后为 1）。',
@@ -668,8 +686,8 @@ const translations: Record<Lang, Dict> = {
     'rr.title': '排序反转分析',
     'rr.intro':
       '模拟移除某些方案，查看其余方案排名如何变化。若相对顺序改变，即发生排序反转。',
-    'rr.radDplUplRecalc':
-      '在 TOPSIS-RAD 中，本模拟的 DPL 与 UPL 仅根据剩余方案重新计算（与加载数据时的默认规则一致）。',
+    'rr.radDplUplLocked':
+      '在 TOPSIS-RAD 中，本模拟的 DPL 与 UPL 与主分析一致（边界固定；不因移除方案而重算）。',
     'rr.select': '选择要模拟移除的方案：',
     'rr.button': '分析排序反转',
     'rr.compare': '排名对比',
@@ -902,6 +920,12 @@ const translations: Record<Lang, Dict> = {
     'template.esg': 'ESG',
     'weights.title': 'Pesos de criterios',
     'weights.subtitle': 'Ajusta los sliders (0-100). La suma se normaliza automáticamente.',
+    'weights.lockIntro':
+      'Candado cerrado: peso fijo. Candado abierto: el peso puede cambiar al ajustar otros criterios. Con al menos un bloqueo, la suma de pesos brutos se mantiene en 100.',
+    'weights.lockHint': 'Bloquear peso de este criterio',
+    'weights.unlockHint': 'Desbloquear peso de este criterio',
+    'weights.lockAria': 'Bloquear peso del criterio',
+    'weights.unlockAria': 'Desbloquear peso del criterio',
     'weights.sum': 'Suma total',
     'radar.title': 'Distribuir puntos en radar',
     'radar.subtitle': 'Ajusta los sliders. La suma siempre es 100 (1 normalizado).',
@@ -912,8 +936,8 @@ const translations: Record<Lang, Dict> = {
     'rr.title': 'Análisis de rank reversal',
     'rr.intro':
       'Simula remover alternativas y mira cómo cambia el ranking de las restantes. Hay rank reversal cuando cambia el orden relativo.',
-    'rr.radDplUplRecalc':
-      'En TOPSIS-RAD, DPL y UPL de esta simulación se recalculan solo con las alternativas restantes (misma regla por defecto que al cargar datos).',
+    'rr.radDplUplLocked':
+      'En TOPSIS-RAD, DPL y UPL de esta simulación coinciden con el análisis principal (fronteras fijas; no se recalculan al quitar alternativas).',
     'rr.select': 'Selecciona alternativas para simular la remoción:',
     'rr.button': 'Analizar rank reversal',
     'rr.compare': 'Comparación de ranking',

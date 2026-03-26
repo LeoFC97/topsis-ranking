@@ -31,6 +31,8 @@ interface DashboardLayoutProps {
   data: TopsisData | null;
   fileName: string | null;
   weights: number[];
+  weightLocks: boolean[];
+  onWeightLocksChange: (locks: boolean[]) => void;
   method: 'topsis' | 'rad';
   dplUpl: DplUplValues | null;
   fullResult: TopsisFullResult | null;
@@ -49,6 +51,8 @@ export function DashboardLayout({
   data,
   fileName,
   weights,
+  weightLocks,
+  onWeightLocksChange,
   method,
   dplUpl,
   fullResult,
@@ -371,6 +375,8 @@ export function DashboardLayout({
                         data={data}
                         weights={weights}
                         onWeightsChange={onWeightsChange}
+                        weightLocks={weightLocks}
+                        onWeightLocksChange={onWeightLocksChange}
                         disabled={!data}
                       />
                     ) : (
@@ -378,6 +384,8 @@ export function DashboardLayout({
                         data={data}
                         weights={weights}
                         onWeightsChange={onWeightsChange}
+                        weightLocks={weightLocks}
+                        onWeightLocksChange={onWeightLocksChange}
                         disabled={!data}
                       />
                     )}
@@ -385,9 +393,10 @@ export function DashboardLayout({
                   <div className={styles.actions}>
                     <button
                       type="button"
-                      onClick={() =>
-                        onWeightsChange(data.criteria.map(() => 100 / data.criteria.length))
-                      }
+                      onClick={() => {
+                        onWeightsChange(data.criteria.map(() => 100 / data.criteria.length));
+                        onWeightLocksChange(data.criteria.map(() => false));
+                      }}
                       className={styles.resetBtn}
                       title={t('data.resetTitle')}
                     >
@@ -453,6 +462,7 @@ export function DashboardLayout({
                 fullResult={fullResult}
                 weights={weights}
                 method={method}
+                dplUpl={dplUpl}
                 computeOptions={{
                   normalization,
                   directions: ensureDirections(data),

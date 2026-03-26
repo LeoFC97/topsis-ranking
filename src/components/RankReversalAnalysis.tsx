@@ -4,11 +4,14 @@ import type { TopsisComputeOptions, TopsisData, TopsisFullResult, TopsisResult }
 import { defaultDplUplValues } from '../lib/topsis';
 import styles from './RankReversalAnalysis.module.css';
 import { useI18n } from '../i18n';
+import type { DplUplValues } from './DplUplInput';
+
 export interface RankReversalAnalysisProps {
   data: TopsisData;
   fullResult: TopsisFullResult;
   weights: number[];
   method: 'topsis' | 'rad';
+  dplUpl: DplUplValues | null;
   computeOptions: TopsisComputeOptions;
 }
 
@@ -26,6 +29,7 @@ export function RankReversalAnalysis({
   fullResult,
   weights,
   method,
+  dplUpl,
   computeOptions,
 }: RankReversalAnalysisProps) {
   const { t } = useI18n();
@@ -67,12 +71,13 @@ export function RankReversalAnalysis({
       alternatives: keptIdx.map((i) => data.alternatives[i]),
       matrix: keptIdx.map((i) => [...data.matrix[i]]),
     };
-    /** UPL/DPL devem refletir o subconjunto: se usássemos os valores do dataset completo,
-     *  remover a alternativa que era mín/máx deixaria DPL/UPL “presos” a fronteiras que já não existem. */
-    const cfgReduced = defaultDplUplValues(reducedData);
+    const cfgRad =
+      dplUpl && dplUpl.dpl.length === data.criteria.length
+        ? dplUpl
+        : defaultDplUplValues(data);
     const newResult =
       method === 'rad'
-        ? topsisRad(reducedData, normalizedWeights, cfgReduced.dpl, cfgReduced.upl, computeOptions)
+        ? topsisRad(reducedData, normalizedWeights, cfgRad.dpl, cfgRad.upl, computeOptions)
         : topsis(reducedData, normalizedWeights, computeOptions);
 
     const rankMapOriginal = new Map<string, TopsisResult>();
@@ -106,7 +111,7 @@ export function RankReversalAnalysis({
         {t('rr.intro')}
       </p>
       {method === 'rad' && (
-        <p className={styles.radNote}>{t('rr.radDplUplRecalc')}</p>
+        <p className={styles.radNote}>{t('rr.radDplUplLocked')}</p>
       )}
 
       <div className={styles.controls}>
