@@ -453,7 +453,6 @@ export function DashboardLayout({
                 fullResult={fullResult}
                 weights={weights}
                 method={method}
-                dplUpl={dplUpl}
                 computeOptions={{
                   normalization,
                   directions: ensureDirections(data),

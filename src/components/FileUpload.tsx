@@ -93,6 +93,13 @@ export function FileUpload({ onFileLoaded, acceptedTypes = '.csv' }: FileUploadP
           ))}
         </select>
       </div>
+      <a
+        href={selectedTemplate.file}
+        download={selectedTemplate.fileName}
+        className="file-upload__button file-upload__button--download"
+      >
+        {t('upload.downloadExample')}
+      </a>
       <button
         type="button"
         onClick={handleLoadTemplate}

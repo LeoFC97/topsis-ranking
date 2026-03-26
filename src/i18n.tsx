@@ -162,6 +162,7 @@ const translations: Record<Lang, Dict> = {
 
     'upload.button': 'Carregar planilha',
     'upload.example': 'Baixar exemplo',
+    'upload.downloadExample': 'Baixar planilha modelo',
     'upload.chooseModel': 'Modelo:',
     'upload.loadModel': 'Carregar modelo',
     'upload.or': 'ou',
@@ -188,6 +189,8 @@ const translations: Record<Lang, Dict> = {
     'rr.title': 'Análise de rank reversal',
     'rr.intro':
       'Simule a remoção de alternativas e veja como o ranking das demais é alterado. O fenômeno de rank reversal ocorre quando a ordem relativa muda ao alterar o conjunto de alternativas.',
+    'rr.radDplUplRecalc':
+      'No TOPSIS-RAD, DPL e UPL desta simulação são recalculados só com as alternativas restantes (mesma regra dos valores padrão ao carregar dados).',
     'rr.select': 'Selecione alternativas para simular remoção:',
     'rr.button': 'Analisar reversão de rank',
     'rr.compare': 'Comparação de ranks',
@@ -404,6 +407,7 @@ const translations: Record<Lang, Dict> = {
     'tooltip.calculateFirst': 'Calculate ranking before opening this tab.',
     'upload.button': 'Upload spreadsheet',
     'upload.example': 'Load example',
+    'upload.downloadExample': 'Download template spreadsheet',
     'upload.chooseModel': 'Template:',
     'upload.loadModel': 'Load template',
     'upload.or': 'or',
@@ -427,6 +431,8 @@ const translations: Record<Lang, Dict> = {
     'rr.title': 'Rank reversal analysis',
     'rr.intro':
       'Simulate removing alternatives and see how the ranking of remaining ones changes. Rank reversal happens when relative order changes after changing the set of alternatives.',
+    'rr.radDplUplRecalc':
+      'In TOPSIS-RAD, DPL and UPL for this simulation are recomputed from the remaining alternatives only (same default rule as when loading data).',
     'rr.select': 'Select alternatives to simulate removal:',
     'rr.button': 'Analyze rank reversal',
     'rr.compare': 'Rank comparison',
@@ -638,6 +644,7 @@ const translations: Record<Lang, Dict> = {
     'tooltip.calculateFirst': '打开该标签前请先计算排名。',
     'upload.button': '上传表格',
     'upload.example': '加载示例',
+    'upload.downloadExample': '下载示例表格',
     'upload.chooseModel': '模型：',
     'upload.loadModel': '加载模型',
     'upload.or': '或',
@@ -661,6 +668,8 @@ const translations: Record<Lang, Dict> = {
     'rr.title': '排序反转分析',
     'rr.intro':
       '模拟移除某些方案，查看其余方案排名如何变化。若相对顺序改变，即发生排序反转。',
+    'rr.radDplUplRecalc':
+      '在 TOPSIS-RAD 中，本模拟的 DPL 与 UPL 仅根据剩余方案重新计算（与加载数据时的默认规则一致）。',
     'rr.select': '选择要模拟移除的方案：',
     'rr.button': '分析排序反转',
     'rr.compare': '排名对比',
@@ -879,6 +888,7 @@ const translations: Record<Lang, Dict> = {
     'tooltip.calculateFirst': 'Calcula el ranking antes de abrir esta pestaña.',
     'upload.button': 'Cargar planilla',
     'upload.example': 'Cargar ejemplo',
+    'upload.downloadExample': 'Descargar planilla modelo',
     'upload.chooseModel': 'Modelo:',
     'upload.loadModel': 'Cargar modelo',
     'upload.or': 'o',
@@ -902,6 +912,8 @@ const translations: Record<Lang, Dict> = {
     'rr.title': 'Análisis de rank reversal',
     'rr.intro':
       'Simula remover alternativas y mira cómo cambia el ranking de las restantes. Hay rank reversal cuando cambia el orden relativo.',
+    'rr.radDplUplRecalc':
+      'En TOPSIS-RAD, DPL y UPL de esta simulación se recalculan solo con las alternativas restantes (misma regla por defecto que al cargar datos).',
     'rr.select': 'Selecciona alternativas para simular la remoción:',
     'rr.button': 'Analizar rank reversal',
     'rr.compare': 'Comparación de ranking',

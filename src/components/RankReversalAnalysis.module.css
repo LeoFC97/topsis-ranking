@@ -16,6 +16,14 @@
   margin: 0 0 1.25rem;
 }
 
+.radNote {
+  font-size: 0.88rem;
+  color: var(--text);
+  opacity: 0.88;
+  line-height: 1.45;
+  margin: -0.5rem 0 1.25rem;
+}
+
 .controls {
   margin-bottom: 1.5rem;
 }

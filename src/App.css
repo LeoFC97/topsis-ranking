@@ -114,6 +114,17 @@
   border-color: color-mix(in srgb, var(--accent) 85%, black);
 }
 
+a.file-upload__button {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.file-upload__button--download {
+  border-style: dashed;
+}
+
 .file-upload__divider {
   color: var(--text);
   font-size: 0.9rem;
