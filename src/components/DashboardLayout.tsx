@@ -445,13 +445,13 @@ export function DashboardLayout({
           {activeTab === 'matrizes' && fullResult && (
             <section className={styles.panel}>
               <h2 className={styles.panelTitle}>{t('matrices.title')}</h2>
-              <TopsisStepsView result={fullResult} />
+              <TopsisStepsView result={fullResult} method={method} />
             </section>
           )}
 
           {activeTab === 'didatico' && fullResult && (
             <section className={styles.panel}>
-              <TopsisAnimatedFlow result={fullResult} />
+              <TopsisAnimatedFlow result={fullResult} method={method} />
             </section>
           )}
 

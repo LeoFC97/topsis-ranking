@@ -1,15 +1,16 @@
 import { useMemo, useState } from 'react';
 import { MatrixViewer } from './MatrixViewer';
 import type { TopsisFullResult } from '../types';
-import { LATEX_PIS_NIS_BENEFIT_ONLY, LATEX_R_MINMAX, LATEX_R_VECTOR } from '../lib/topsisLatex';
+import { LATEX_DPL_UPL_BENEFIT_ONLY, LATEX_PIS_NIS_BENEFIT_ONLY, LATEX_R_MINMAX, LATEX_R_VECTOR } from '../lib/topsisLatex';
 import styles from './TopsisStepsView.module.css';
 import { useI18n } from '../i18n';
 
 interface TopsisStepsViewProps {
   result: TopsisFullResult;
+  method: 'topsis' | 'rad';
 }
 
-export function TopsisStepsView({ result }: TopsisStepsViewProps) {
+export function TopsisStepsView({ result, method }: TopsisStepsViewProps) {
   const { t } = useI18n();
   const [expandedStep, setExpandedStep] = useState<number | null>(0);
 
@@ -22,8 +23,10 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
   const stepItems = useMemo(() => {
     const rDesc = isVector ? t('steps.step2.descriptionVector') : t('steps.step2.description');
     const rFormula = isVector ? LATEX_R_VECTOR : LATEX_R_MINMAX;
-    const refDesc = hasCost ? t('steps.step4.descriptionMixed') : t('steps.step4.description');
-    const refFormula = hasCost ? undefined : LATEX_PIS_NIS_BENEFIT_ONLY;
+    const refDesc = hasCost
+      ? (method === 'rad' ? t('steps.step4.descriptionMixedRad') : t('steps.step4.descriptionMixed'))
+      : (method === 'rad' ? t('steps.step4.descriptionRad') : t('steps.step4.description'));
+    const refFormula = hasCost ? undefined : (method === 'rad' ? LATEX_DPL_UPL_BENEFIT_ONLY : LATEX_PIS_NIS_BENEFIT_ONLY);
 
     return [
       {
@@ -64,22 +67,27 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       },
       {
         key: 'ref',
-        title: t('steps.step4.title'),
+        title: method === 'rad' ? t('steps.step4.titleRad') : t('steps.step4.title'),
         description: refDesc,
         formulaLatex: refFormula,
         matrix: [PIS, NIS],
-        rowLabels: [t('matrix.label.pis'), t('matrix.label.nis')],
+        rowLabels: method === 'rad'
+          ? [t('rad.method.dpl'), t('rad.method.upl')]
+          : [t('matrix.label.pis'), t('matrix.label.nis')],
         colLabels: criteria,
       },
       {
         key: 'dist',
         title: t('steps.step5.title'),
-        description: t('steps.step5.description'),
-        formulaLatex:
-          'd_{ib} = \\sqrt{\\sum_j (t_{ij} - PIS_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - NIS_j)^2}',
+        description: method === 'rad' ? t('steps.step5.descriptionRad') : t('steps.step5.description'),
+        formulaLatex: method === 'rad'
+          ? 'd_{ib} = \\sqrt{\\sum_j (t_{ij} - DPL_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - UPL_j)^2}'
+          : 'd_{ib} = \\sqrt{\\sum_j (t_{ij} - PIS_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - NIS_j)^2}',
         matrix: distances.map((d) => [d.d_ib, d.d_iw]),
         rowLabels: alternatives,
-        colLabels: [t('steps.step5.colPIS'), t('steps.step5.colNIS')],
+        colLabels: method === 'rad'
+          ? [t('steps.step5.colDPL'), t('steps.step5.colUPL')]
+          : [t('steps.step5.colPIS'), t('steps.step5.colNIS')],
       },
       {
         key: 'scores',
@@ -92,6 +100,7 @@ export function TopsisStepsView({ result }: TopsisStepsViewProps) {
       },
     ];
   }, [
+    method,
     t,
     isVector,
     hasCost,

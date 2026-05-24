@@ -2,15 +2,16 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { AnimatedMatrixTable } from './AnimatedMatrixTable';
 import { MathFormula } from './MathFormula';
 import type { TopsisFullResult } from '../types';
-import { LATEX_PIS_NIS_BENEFIT_ONLY, LATEX_R_MINMAX, LATEX_R_VECTOR } from '../lib/topsisLatex';
+import { LATEX_DPL_UPL_BENEFIT_ONLY, LATEX_PIS_NIS_BENEFIT_ONLY, LATEX_R_MINMAX, LATEX_R_VECTOR } from '../lib/topsisLatex';
 import styles from './TopsisAnimatedFlow.module.css';
 import { useI18n } from '../i18n';
 
 interface TopsisAnimatedFlowProps {
   result: TopsisFullResult;
+  method: 'topsis' | 'rad';
 }
 
-export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
+export function TopsisAnimatedFlow({ result, method }: TopsisAnimatedFlowProps) {
   const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -25,8 +26,10 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
   const stepsInfo = useMemo(() => {
     const rFormula = isVector ? LATEX_R_VECTOR : LATEX_R_MINMAX;
     const rDesc = isVector ? t('didactic.step2.descriptionVector') : t('didactic.step2.description');
-    const refDesc = hasCost ? t('didactic.step4.descriptionMixed') : t('didactic.step4.description');
-    const refFormula = hasCost ? undefined : LATEX_PIS_NIS_BENEFIT_ONLY;
+    const refDesc = hasCost
+      ? (method === 'rad' ? t('didactic.step4.descriptionMixedRad') : t('didactic.step4.descriptionMixed'))
+      : (method === 'rad' ? t('didactic.step4.descriptionRad') : t('didactic.step4.description'));
+    const refFormula = hasCost ? undefined : (method === 'rad' ? LATEX_DPL_UPL_BENEFIT_ONLY : LATEX_PIS_NIS_BENEFIT_ONLY);
 
     return [
       {
@@ -55,16 +58,17 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
       },
       {
         key: 'ref',
-        title: t('didactic.step4.title'),
+        title: method === 'rad' ? t('didactic.step4.titleRad') : t('didactic.step4.title'),
         formulaLatex: refFormula,
         description: refDesc,
       },
       {
         key: 'dist',
         title: t('didactic.step5.title'),
-        formulaLatex:
-          'd_{ib} = \\sqrt{\\sum_j (t_{ij} - PIS_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - NIS_j)^2}',
-        description: t('didactic.step5.description'),
+        formulaLatex: method === 'rad'
+          ? 'd_{ib} = \\sqrt{\\sum_j (t_{ij} - DPL_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - UPL_j)^2}'
+          : 'd_{ib} = \\sqrt{\\sum_j (t_{ij} - PIS_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - NIS_j)^2}',
+        description: method === 'rad' ? t('didactic.step5.descriptionRad') : t('didactic.step5.description'),
       },
       {
         key: 'scores',
@@ -73,7 +77,7 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
         description: t('didactic.step6.description'),
       },
     ];
-  }, [t, isVector, hasCost]);
+  }, [method, t, isVector, hasCost]);
 
   const stepData = [
     { matrix: matrixG, rowLabels: alternatives, colLabels: criteria, decimals: 0 },
@@ -82,14 +86,18 @@ export function TopsisAnimatedFlow({ result }: TopsisAnimatedFlowProps) {
     { matrix: matrixT, rowLabels: alternatives, colLabels: criteria, decimals: 4 },
     {
       matrix: [PIS, NIS],
-      rowLabels: [t('matrix.label.pis'), t('matrix.label.nis')],
+      rowLabels: method === 'rad'
+        ? [t('rad.method.dpl'), t('rad.method.upl')]
+        : [t('matrix.label.pis'), t('matrix.label.nis')],
       colLabels: criteria,
       decimals: 4,
     },
     {
       matrix: distances.map((d) => [d.d_iw, d.d_ib]),
       rowLabels: alternatives,
-      colLabels: [t('didactic.col.nis'), t('didactic.col.pis')],
+      colLabels: method === 'rad'
+        ? [t('didactic.col.nisRad'), t('didactic.col.pisRad')]
+        : [t('didactic.col.nis'), t('didactic.col.pis')],
       decimals: 4,
     },
     {
