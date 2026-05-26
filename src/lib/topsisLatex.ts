@@ -7,5 +7,5 @@ export const LATEX_R_VECTOR =
 
 export const LATEX_PIS_NIS_BENEFIT_ONLY =
   'PIS_j = \\max_i(t_{ij}),\\quad NIS_j = \\min_i(t_{ij})';
-export const LATEX_DPL_UPL_BENEFIT_ONLY =
-  'DPL_j = \\max_i(t_{ij}),\\quad UPL_j = \\min_i(t_{ij})';
+export const LATEX_DPL_VPL_BENEFIT_ONLY =
+  'DNL_j = \\max_i(t_{ij}),\\quad VNL_j = \\min_i(t_{ij})';

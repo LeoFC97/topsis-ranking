@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { AnimatedMatrixTable } from './AnimatedMatrixTable';
 import { MathFormula } from './MathFormula';
 import type { TopsisFullResult } from '../types';
-import { LATEX_DPL_UPL_BENEFIT_ONLY, LATEX_PIS_NIS_BENEFIT_ONLY, LATEX_R_MINMAX, LATEX_R_VECTOR } from '../lib/topsisLatex';
+import { LATEX_DPL_VPL_BENEFIT_ONLY, LATEX_PIS_NIS_BENEFIT_ONLY, LATEX_R_MINMAX, LATEX_R_VECTOR } from '../lib/topsisLatex';
 import styles from './TopsisAnimatedFlow.module.css';
 import { useI18n } from '../i18n';
 
@@ -29,7 +29,7 @@ export function TopsisAnimatedFlow({ result, method }: TopsisAnimatedFlowProps) 
     const refDesc = hasCost
       ? (method === 'rad' ? t('didactic.step4.descriptionMixedRad') : t('didactic.step4.descriptionMixed'))
       : (method === 'rad' ? t('didactic.step4.descriptionRad') : t('didactic.step4.description'));
-    const refFormula = hasCost ? undefined : (method === 'rad' ? LATEX_DPL_UPL_BENEFIT_ONLY : LATEX_PIS_NIS_BENEFIT_ONLY);
+    const refFormula = hasCost ? undefined : (method === 'rad' ? LATEX_DPL_VPL_BENEFIT_ONLY : LATEX_PIS_NIS_BENEFIT_ONLY);
 
     return [
       {
@@ -66,7 +66,7 @@ export function TopsisAnimatedFlow({ result, method }: TopsisAnimatedFlowProps) 
         key: 'dist',
         title: t('didactic.step5.title'),
         formulaLatex: method === 'rad'
-          ? 'd_{ib} = \\sqrt{\\sum_j (t_{ij} - DPL_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - UPL_j)^2}'
+          ? 'd_{ib} = \\sqrt{\\sum_j (t_{ij} - DNL_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - VNL_j)^2}'
           : 'd_{ib} = \\sqrt{\\sum_j (t_{ij} - PIS_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - NIS_j)^2}',
         description: method === 'rad' ? t('didactic.step5.descriptionRad') : t('didactic.step5.description'),
       },
@@ -87,7 +87,7 @@ export function TopsisAnimatedFlow({ result, method }: TopsisAnimatedFlowProps) 
     {
       matrix: [PIS, NIS],
       rowLabels: method === 'rad'
-        ? [t('rad.method.dpl'), t('rad.method.upl')]
+        ? [t('rad.method.dpl'), t('rad.method.vpl')]
         : [t('matrix.label.pis'), t('matrix.label.nis')],
       colLabels: criteria,
       decimals: 4,

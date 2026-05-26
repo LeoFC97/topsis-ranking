@@ -43,7 +43,7 @@ export interface TopsisFullResult {
   steps: TopsisSteps;
   alternatives: string[];
   criteria: string[];
-  /** Alternativas excluídas por UPL (TOPSIS-RAD) */
+  /** Alternativas excluídas por VPL (TOPSIS-RAD) */
   excludedAlternatives?: string[];
   /** Indica se foi usado TOPSIS-RAD */
   isRad?: boolean;

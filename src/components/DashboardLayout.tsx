@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { FileUpload } from './FileUpload';
 import { WeightSliders } from './WeightSliders';
 import { WeightRadarInput } from './WeightRadarInput';
-import { DplUplInput, type DplUplValues } from './DplUplInput';
+import { DplVplInput, type DplVplValues } from './DplVplInput';
 import { DatasetEditor } from './DatasetEditor';
 import { RankingTable } from './RankingTable';
 import { TopsisDashboard } from './TopsisDashboard';
@@ -34,14 +34,14 @@ interface DashboardLayoutProps {
   weightLocks: boolean[];
   onWeightLocksChange: (locks: boolean[]) => void;
   method: 'topsis' | 'rad';
-  dplUpl: DplUplValues | null;
+  dplVpl: DplVplValues | null;
   fullResult: TopsisFullResult | null;
   parseError: string | null;
   onFileLoaded: (content: string, name: string) => void;
   onDataChange: (nextData: TopsisData) => void;
   onWeightsChange: (weights: number[]) => void;
   onMethodChange: (method: 'topsis' | 'rad') => void;
-  onDplUplChange: (value: DplUplValues | null) => void;
+  onDplVplChange: (value: DplVplValues | null) => void;
   onCalculate: () => void;
   normalization: NormalizationMethod;
   onNormalizationChange: (n: NormalizationMethod) => void;
@@ -54,14 +54,14 @@ export function DashboardLayout({
   weightLocks,
   onWeightLocksChange,
   method,
-  dplUpl,
+  dplVpl,
   fullResult,
   parseError,
   onFileLoaded,
   onDataChange,
   onWeightsChange,
   onMethodChange,
-  onDplUplChange,
+  onDplVplChange,
   onCalculate,
   normalization,
   onNormalizationChange,
@@ -343,10 +343,10 @@ export function DashboardLayout({
                     </p>
                   )}
                   {method === 'rad' && (
-                    <DplUplInput
+                    <DplVplInput
                       data={data}
-                      value={dplUpl}
-                      onChange={onDplUplChange}
+                      value={dplVpl}
+                      onChange={onDplVplChange}
                       disabled={!data}
                     />
                   )}
@@ -462,7 +462,7 @@ export function DashboardLayout({
                 fullResult={fullResult}
                 weights={weights}
                 method={method}
-                dplUpl={dplUpl}
+                dplVpl={dplVpl}
                 computeOptions={{
                   normalization,
                   directions: ensureDirections(data),

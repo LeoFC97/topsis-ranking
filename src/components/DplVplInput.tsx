@@ -1,59 +1,59 @@
 import { useEffect } from 'react';
 import type { TopsisData } from '../types';
-import { defaultDplUplValues, ensureDirections } from '../lib/topsis';
+import { defaultDplVplValues, ensureDirections } from '../lib/topsis';
 import { useI18n } from '../i18n';
-import styles from './DplUplInput.module.css';
+import styles from './DplVplInput.module.css';
 
-export interface DplUplValues {
+export interface DplVplValues {
   dpl: number[];
-  upl: number[];
+  vpl: number[];
 }
 
-interface DplUplInputProps {
+interface DplVplInputProps {
   data: TopsisData | null;
-  value: DplUplValues | null;
-  onChange: (value: DplUplValues | null) => void;
+  value: DplVplValues | null;
+  onChange: (value: DplVplValues | null) => void;
   disabled?: boolean;
 }
 
-export function DplUplInput({ data, value, onChange, disabled = false }: DplUplInputProps) {
+export function DplVplInput({ data, value, onChange, disabled = false }: DplVplInputProps) {
   const { t } = useI18n();
 
   useEffect(() => {
     if (!data) return;
-    if (!value || value.dpl.length !== data.criteria.length || value.upl.length !== data.criteria.length) {
-      onChange(defaultDplUplValues(data));
+    if (!value || value.dpl.length !== data.criteria.length || value.vpl.length !== data.criteria.length) {
+      onChange(defaultDplVplValues(data));
     }
   }, [data, value, onChange]);
 
   if (!data) return null;
-  const current = value ?? defaultDplUplValues(data);
+  const current = value ?? defaultDplVplValues(data);
   const dirs = ensureDirections(data);
 
-  const updateAt = (kind: 'dpl' | 'upl', idx: number, raw: string) => {
+  const updateAt = (kind: 'dpl' | 'vpl', idx: number, raw: string) => {
     const next = Number(raw);
     const parsed = Number.isFinite(next) ? next : 0;
     const dpl = [...current.dpl];
-    const upl = [...current.upl];
+    const vpl = [...current.vpl];
     const benefit = dirs[idx] === 'benefit';
 
     if (kind === 'dpl') {
       dpl[idx] = parsed;
       if (benefit) {
-        if (dpl[idx] < upl[idx]) upl[idx] = dpl[idx];
+        if (dpl[idx] < vpl[idx]) vpl[idx] = dpl[idx];
       } else {
-        if (dpl[idx] > upl[idx]) upl[idx] = dpl[idx];
+        if (dpl[idx] > vpl[idx]) vpl[idx] = dpl[idx];
       }
     } else {
-      upl[idx] = parsed;
+      vpl[idx] = parsed;
       if (benefit) {
-        if (upl[idx] > dpl[idx]) dpl[idx] = upl[idx];
+        if (vpl[idx] > dpl[idx]) dpl[idx] = vpl[idx];
       } else {
-        if (upl[idx] < dpl[idx]) dpl[idx] = upl[idx];
+        if (vpl[idx] < dpl[idx]) dpl[idx] = vpl[idx];
       }
     }
 
-    onChange({ dpl, upl });
+    onChange({ dpl, vpl });
   };
 
   return (
@@ -73,8 +73,8 @@ export function DplUplInput({ data, value, onChange, disabled = false }: DplUplI
               <span>{dirs[i] === 'benefit' ? t('rad.method.eLabel') : t('rad.method.eLabelCost')}</span>
               <input
                 type="number"
-                value={current.upl[i]}
-                onChange={(e) => updateAt('upl', i, e.target.value)}
+                value={current.vpl[i]}
+                onChange={(e) => updateAt('vpl', i, e.target.value)}
                 disabled={disabled}
               />
             </label>

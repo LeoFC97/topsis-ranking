@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { MatrixViewer } from './MatrixViewer';
 import type { TopsisFullResult } from '../types';
-import { LATEX_DPL_UPL_BENEFIT_ONLY, LATEX_PIS_NIS_BENEFIT_ONLY, LATEX_R_MINMAX, LATEX_R_VECTOR } from '../lib/topsisLatex';
+import { LATEX_DPL_VPL_BENEFIT_ONLY, LATEX_PIS_NIS_BENEFIT_ONLY, LATEX_R_MINMAX, LATEX_R_VECTOR } from '../lib/topsisLatex';
 import styles from './TopsisStepsView.module.css';
 import { useI18n } from '../i18n';
 
@@ -26,7 +26,7 @@ export function TopsisStepsView({ result, method }: TopsisStepsViewProps) {
     const refDesc = hasCost
       ? (method === 'rad' ? t('steps.step4.descriptionMixedRad') : t('steps.step4.descriptionMixed'))
       : (method === 'rad' ? t('steps.step4.descriptionRad') : t('steps.step4.description'));
-    const refFormula = hasCost ? undefined : (method === 'rad' ? LATEX_DPL_UPL_BENEFIT_ONLY : LATEX_PIS_NIS_BENEFIT_ONLY);
+    const refFormula = hasCost ? undefined : (method === 'rad' ? LATEX_DPL_VPL_BENEFIT_ONLY : LATEX_PIS_NIS_BENEFIT_ONLY);
 
     return [
       {
@@ -72,7 +72,7 @@ export function TopsisStepsView({ result, method }: TopsisStepsViewProps) {
         formulaLatex: refFormula,
         matrix: [PIS, NIS],
         rowLabels: method === 'rad'
-          ? [t('rad.method.dpl'), t('rad.method.upl')]
+          ? [t('rad.method.dpl'), t('rad.method.vpl')]
           : [t('matrix.label.pis'), t('matrix.label.nis')],
         colLabels: criteria,
       },
@@ -81,12 +81,12 @@ export function TopsisStepsView({ result, method }: TopsisStepsViewProps) {
         title: t('steps.step5.title'),
         description: method === 'rad' ? t('steps.step5.descriptionRad') : t('steps.step5.description'),
         formulaLatex: method === 'rad'
-          ? 'd_{ib} = \\sqrt{\\sum_j (t_{ij} - DPL_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - UPL_j)^2}'
+          ? 'd_{ib} = \\sqrt{\\sum_j (t_{ij} - DNL_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - VNL_j)^2}'
           : 'd_{ib} = \\sqrt{\\sum_j (t_{ij} - PIS_j)^2},\\quad d_{iw} = \\sqrt{\\sum_j (t_{ij} - NIS_j)^2}',
         matrix: distances.map((d) => [d.d_ib, d.d_iw]),
         rowLabels: alternatives,
         colLabels: method === 'rad'
-          ? [t('steps.step5.colDPL'), t('steps.step5.colUPL')]
+          ? [t('steps.step5.colDNL'), t('steps.step5.colVNL')]
           : [t('steps.step5.colPIS'), t('steps.step5.colNIS')],
       },
       {

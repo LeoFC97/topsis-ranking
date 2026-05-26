@@ -1,17 +1,17 @@
 import { useState, useMemo } from 'react';
 import { topsis, topsisRad } from '../lib/topsis';
 import type { TopsisComputeOptions, TopsisData, TopsisFullResult, TopsisResult } from '../types';
-import { defaultDplUplValues } from '../lib/topsis';
+import { defaultDplVplValues } from '../lib/topsis';
 import styles from './RankReversalAnalysis.module.css';
 import { useI18n } from '../i18n';
-import type { DplUplValues } from './DplUplInput';
+import type { DplVplValues } from './DplVplInput';
 
 export interface RankReversalAnalysisProps {
   data: TopsisData;
   fullResult: TopsisFullResult;
   weights: number[];
   method: 'topsis' | 'rad';
-  dplUpl: DplUplValues | null;
+  dplVpl: DplVplValues | null;
   computeOptions: TopsisComputeOptions;
 }
 
@@ -29,7 +29,7 @@ export function RankReversalAnalysis({
   fullResult,
   weights,
   method,
-  dplUpl,
+  dplVpl,
   computeOptions,
 }: RankReversalAnalysisProps) {
   const { t } = useI18n();
@@ -72,12 +72,12 @@ export function RankReversalAnalysis({
       matrix: keptIdx.map((i) => [...data.matrix[i]]),
     };
     const cfgRad =
-      dplUpl && dplUpl.dpl.length === data.criteria.length
-        ? dplUpl
-        : defaultDplUplValues(data);
+      dplVpl && dplVpl.dpl.length === data.criteria.length
+        ? dplVpl
+        : defaultDplVplValues(data);
     const newResult =
       method === 'rad'
-        ? topsisRad(reducedData, normalizedWeights, cfgRad.dpl, cfgRad.upl, computeOptions)
+        ? topsisRad(reducedData, normalizedWeights, cfgRad.dpl, cfgRad.vpl, computeOptions)
         : topsis(reducedData, normalizedWeights, computeOptions);
 
     const rankMapOriginal = new Map<string, TopsisResult>();
@@ -111,7 +111,7 @@ export function RankReversalAnalysis({
         {t('rr.intro')}
       </p>
       {method === 'rad' && (
-        <p className={styles.radNote}>{t('rr.radDplUplLocked')}</p>
+        <p className={styles.radNote}>{t('rr.radDplVNLLocked')}</p>
       )}
 
       <div className={styles.controls}>

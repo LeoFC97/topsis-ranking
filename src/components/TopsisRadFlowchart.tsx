@@ -22,9 +22,9 @@ export function TopsisRadFlowchart() {
         <div className={styles.arrow}>↓</div>
 
         <div className={styles.rowUpl}>
-          <span className={styles.stepTag}>{t('flowchartRad.tagUpl')}</span>
+          <span className={styles.stepTag}>{t('flowchartRad.tagVNL')}</span>
           <div className={`${styles.node} ${styles.diamond}`}>
-            <span>{t('flowchartRad.uplQ')}</span>
+            <span>{t('flowchartRad.VNLQ')}</span>
           </div>
           <div className={styles.sideBranch}>
             <span className={styles.branchLbl}>{t('flowchartRad.no')}</span>

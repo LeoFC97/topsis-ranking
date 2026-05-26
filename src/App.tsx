@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { parseCSV } from './lib/parseCsv';
-import { topsis, topsisRad, defaultDplUplValues, ensureDirections } from './lib/topsis';
+import { topsis, topsisRad, defaultDplVplValues, ensureDirections } from './lib/topsis';
 import { DashboardLayout } from './components/DashboardLayout';
 import type { TopsisData, TopsisFullResult, NormalizationMethod } from './types';
 import { useI18n } from './i18n';
-import type { DplUplValues } from './components/DplUplInput';
+import type { DplVplValues } from './components/DplVplInput';
 import './App.css';
 
 type Method = 'topsis' | 'rad';
@@ -23,7 +23,7 @@ export default function App() {
   const [weights, setWeights] = useState<number[]>([]);
   const [weightLocks, setWeightLocks] = useState<boolean[]>([]);
   const [method, setMethod] = useState<Method>('topsis');
-  const [dplUpl, setDplUpl] = useState<DplUplValues | null>(null);
+  const [dplVpl, setDplVpl] = useState<DplVplValues | null>(null);
   const [fullResult, setFullResult] = useState<TopsisFullResult | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
   const [normalization, setNormalization] = useState<NormalizationMethod>(readStoredNormalization);
@@ -58,7 +58,7 @@ export default function App() {
       setWeightLocks(parsed.criteria.map(() => false));
       setMethod('topsis');
       setNormalization('minmax');
-      setDplUpl(defaultDplUplValues(parsed));
+      setDplVpl(defaultDplVplValues(parsed));
     } else {
       setData(null);
       setFileName(null);
@@ -84,14 +84,14 @@ export default function App() {
     const wNorm = sumW > 0 ? w.map((v) => v / sumW) : w.map(() => 1 / data.criteria.length);
     const useRad = method === 'rad';
     const config =
-      dplUpl && dplUpl.dpl.length === data.criteria.length ? dplUpl : defaultDplUplValues(data);
+      dplVpl && dplVpl.dpl.length === data.criteria.length ? dplVpl : defaultDplVplValues(data);
     const opts = computeOpts();
     if (!opts) return;
     const result = useRad
-      ? topsisRad(data, wNorm, config.dpl, config.upl, opts)
+      ? topsisRad(data, wNorm, config.dpl, config.vpl, opts)
       : topsis(data, wNorm, opts);
     setFullResult(result);
-  }, [data, weights, method, dplUpl, computeOpts]);
+  }, [data, weights, method, dplVpl, computeOpts]);
 
   const handleDataChange = useCallback((nextData: TopsisData) => {
     setData((prev) => {
@@ -100,7 +100,7 @@ export default function App() {
         prev.criteria.length !== nextData.criteria.length ||
         JSON.stringify(ensureDirections(prev)) !== JSON.stringify(ensureDirections(nextData))
       ) {
-        setDplUpl(defaultDplUplValues(nextData));
+        setDplVpl(defaultDplVplValues(nextData));
       }
       return nextData;
     });
@@ -119,11 +119,11 @@ export default function App() {
       weightLocks={weightLocks}
       onWeightLocksChange={setWeightLocks}
       method={method}
-      dplUpl={dplUpl}
+      dplVpl={dplVpl}
       normalization={normalization}
       onNormalizationChange={setNormalizationPersist}
       onMethodChange={setMethod}
-      onDplUplChange={setDplUpl}
+      onDplVplChange={setDplVpl}
       onDataChange={handleDataChange}
       onWeightsChange={setWeights}
       fullResult={fullResult}

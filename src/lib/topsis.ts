@@ -78,11 +78,11 @@ function computePISNIS(
   return { PIS, NIS };
 }
 
-/** UPL/DPL por defeito: benefício — UPL no mínimo da coluna e DPL no máximo; custo — o simétrico. */
-export function defaultDplUplValues(data: TopsisData): { dpl: number[]; upl: number[] } {
+/** VPL/DPL por defeito: benefício — VPL no mínimo da coluna e DPL no máximo; custo — o simétrico. */
+export function defaultDplVplValues(data: TopsisData): { dpl: number[]; vpl: number[] } {
   const n = data.criteria.length;
   const dirs = ensureDirections(data);
-  const upl = Array.from({ length: n }, (_, j) => {
+  const vpl = Array.from({ length: n }, (_, j) => {
     const col = data.matrix.map((row) => row[j]);
     return dirs[j] === 'benefit' ? Math.min(...col) : Math.max(...col);
   });
@@ -90,7 +90,7 @@ export function defaultDplUplValues(data: TopsisData): { dpl: number[]; upl: num
     const col = data.matrix.map((row) => row[j]);
     return dirs[j] === 'benefit' ? Math.max(...col) : Math.min(...col);
   });
-  return { dpl, upl };
+  return { dpl, vpl };
 }
 
 /**
@@ -158,14 +158,14 @@ export function topsis(
 }
 
 /**
- * TOPSIS-RAD: UPL filtra alternativas; DPL constrói matriz C antes da normalização.
- * Compatível com o apêndice: comparações UPL/DPL dependem de benefício vs custo.
+ * TOPSIS-RAD: VPL filtra alternativas; DPL constrói matriz C antes da normalização.
+ * Compatível com o apêndice: comparações VPL/DPL dependem de benefício vs custo.
  */
 export function topsisRad(
   data: TopsisData,
   weights: number[],
   dpl: number[],
-  upl: number[],
+  vpl: number[],
   options?: Partial<TopsisComputeOptions>
 ): TopsisFullResult {
   const directions = options?.directions ?? ensureDirections(data);
@@ -182,8 +182,8 @@ export function topsisRad(
     for (let j = 0; j < n; j++) {
       const ok =
         directions[j] === 'benefit'
-          ? matrix[i][j] >= upl[j]
-          : matrix[i][j] <= upl[j];
+          ? matrix[i][j] >= vpl[j]
+          : matrix[i][j] <= vpl[j];
       if (!ok) {
         qualified = false;
         excludedAlternatives.push(alternatives[i]);
