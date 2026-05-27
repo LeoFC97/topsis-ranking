@@ -1,4 +1,15 @@
-import type { TopsisResult } from '../types';
+import type { TopsisData, TopsisResult } from '../types';
+
+/**
+ * Exports TopsisData to a CSV string compatible with parseCsvToTopsis.
+ */
+export function exportDatasetToCsv(data: TopsisData): string {
+  const header = ['alternativa', ...data.criteria].join(',');
+  const rows = data.alternatives.map((alt, i) =>
+    [`"${alt}"`, ...data.matrix[i].map(String)].join(',')
+  );
+  return [header, ...rows].join('\n');
+}
 
 /**
  * Exports ranking to CSV string.

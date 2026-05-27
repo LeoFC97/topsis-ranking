@@ -1,5 +1,7 @@
+import { useEffect, useRef, useState } from 'react';
 import type { CriterionDirection, TopsisData } from '../types';
 import { ensureDirections } from '../lib/topsis';
+import { exportDatasetToCsv, downloadFile } from '../lib/exportCsv';
 import { useI18n } from '../i18n';
 import styles from './DatasetEditor.module.css';
 
@@ -12,31 +14,47 @@ interface DatasetEditorProps {
 export function DatasetEditor({ data, onChange, disabled = false }: DatasetEditorProps) {
   const { t } = useI18n();
 
+  const lastUserEdit = useRef<TopsisData | null>(null);
+  const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    if (data !== lastUserEdit.current) {
+      lastUserEdit.current = data;
+      setDirty(false);
+    }
+  }, [data]);
+
   if (!data) return null;
+
+  const emitChange = (next: TopsisData) => {
+    lastUserEdit.current = next;
+    setDirty(true);
+    onChange(next);
+  };
 
   const updateAltName = (rowIdx: number, nextName: string) => {
     const alternatives = [...data.alternatives];
     alternatives[rowIdx] = nextName;
-    onChange({ ...data, alternatives });
+    emitChange({ ...data, alternatives });
   };
 
   const updateCell = (rowIdx: number, colIdx: number, rawValue: string) => {
     const matrix = data.matrix.map((row) => [...row]);
     const parsed = Number(String(rawValue).replace(',', '.'));
     matrix[rowIdx][colIdx] = Number.isFinite(parsed) ? parsed : 0;
-    onChange({ ...data, matrix });
+    emitChange({ ...data, matrix });
   };
 
   const updateCriterionName = (colIdx: number, nextName: string) => {
     const criteria = [...data.criteria];
     criteria[colIdx] = nextName;
-    onChange({ ...data, criteria });
+    emitChange({ ...data, criteria });
   };
 
   const updateDirection = (colIdx: number, dir: CriterionDirection) => {
     const dirs = [...ensureDirections(data)];
     dirs[colIdx] = dir;
-    onChange({ ...data, directions: dirs });
+    emitChange({ ...data, directions: dirs });
   };
 
   const addRow = () => {
@@ -45,14 +63,20 @@ export function DatasetEditor({ data, onChange, disabled = false }: DatasetEdito
       t('matrix.fallbackAlt').replace('{n}', String(data.alternatives.length + 1)),
     ];
     const matrix = [...data.matrix, data.criteria.map(() => 0)];
-    onChange({ ...data, alternatives, matrix });
+    emitChange({ ...data, alternatives, matrix });
   };
 
   const removeRow = (rowIdx: number) => {
     if (data.alternatives.length <= 1) return;
     const alternatives = data.alternatives.filter((_, i) => i !== rowIdx);
     const matrix = data.matrix.filter((_, i) => i !== rowIdx);
-    onChange({ ...data, alternatives, matrix });
+    emitChange({ ...data, alternatives, matrix });
+  };
+
+  const handleSaveCsv = () => {
+    downloadFile(exportDatasetToCsv(data), 'dataset.csv');
+    lastUserEdit.current = data;
+    setDirty(false);
   };
 
   return (
@@ -62,9 +86,20 @@ export function DatasetEditor({ data, onChange, disabled = false }: DatasetEdito
           <h3 className={styles.title}>{t('dataset.title')}</h3>
           <p className={styles.subtitle}>{t('dataset.subtitle')}</p>
         </div>
-        <button type="button" className={styles.addBtn} onClick={addRow} disabled={disabled}>
-          {t('dataset.addRow')}
-        </button>
+        <div className={styles.headerActions}>
+          <button
+            type="button"
+            className={styles.saveBtn}
+            onClick={handleSaveCsv}
+            disabled={!dirty || disabled}
+            title={t('dataset.saveCsv')}
+          >
+            {t('dataset.saveCsv')}
+          </button>
+          <button type="button" className={styles.addBtn} onClick={addRow} disabled={disabled}>
+            {t('dataset.addRow')}
+          </button>
+        </div>
       </div>
 
       <div className={styles.tableWrap}>
