@@ -168,3 +168,46 @@
   font-style: italic;
   margin: 0;
 }
+
+.appInfo {
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.appInfoTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 0.85rem;
+}
+
+.appInfoRow {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin: 0.35rem 0;
+  line-height: 1.5;
+}
+
+.appInfoAck {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin: 0.75rem 0 0.35rem;
+  line-height: 1.6;
+}
+
+.appInfoLabel {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.emailLink {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.emailLink:hover {
+  text-decoration: underline;
+}

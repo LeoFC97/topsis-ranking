@@ -237,6 +237,12 @@ const translations: Record<Lang, Dict> = {
     'about.step7': 'Passo 7. Ordenar por score (maior = melhor)',
     'about.legend': 'Fluxo do TOPSIS clássico',
     'about.ref': 'Baseado em Hwang & Yoon (1981).',
+    'about.app.sectionTitle': 'Sobre esta aplicação',
+    'about.app.authorsLabel': 'Autores:',
+    'about.app.authorsNames': 'Leonardo F. Costa & Helder G. Costa',
+    'about.app.ack':
+      'Agradecemos seu interesse nesta ferramenta. Caso tenha comentários, sugestões ou identifique algum bug, entre em contato:',
+    'about.app.emailLabel': 'E-mail:',
 
     'theme.switchToDark': 'Ativar tema escuro',
     'theme.switchToLight': 'Ativar tema claro',
@@ -499,6 +505,12 @@ const translations: Record<Lang, Dict> = {
     'about.step7': 'Step 7. Sort by score (higher = better)',
     'about.legend': 'Classic TOPSIS flow',
     'about.ref': 'Based on Hwang & Yoon (1981).',
+    'about.app.sectionTitle': 'About this App',
+    'about.app.authorsLabel': 'Authors:',
+    'about.app.authorsNames': 'Leonardo F. Costa & Helder G. Costa',
+    'about.app.ack':
+      'We appreciate your interest in this tool. For comments, suggestions, or bug reports, please contact us:',
+    'about.app.emailLabel': 'E-mail:',
 
     'theme.switchToDark': 'Use dark theme',
     'theme.switchToLight': 'Use light theme',
@@ -756,6 +768,12 @@ const translations: Record<Lang, Dict> = {
     'about.step7': '步骤 7：按得分降序排序',
     'about.legend': '经典 TOPSIS 流程',
     'about.ref': '基于 Hwang & Yoon (1981)。',
+    'about.app.sectionTitle': '关于本应用',
+    'about.app.authorsLabel': '作者：',
+    'about.app.authorsNames': 'Leonardo F. Costa & Helder G. Costa',
+    'about.app.ack':
+      '感谢您对本工具的关注。如有意见、建议或发现错误，欢迎联系我们：',
+    'about.app.emailLabel': '电子邮件：',
 
     'theme.switchToDark': '深色主题',
     'theme.switchToLight': '浅色主题',
@@ -1021,6 +1039,12 @@ const translations: Record<Lang, Dict> = {
     'about.step7': 'Paso 7. Ordenar por score (mayor = mejor)',
     'about.legend': 'Flujo TOPSIS clásico',
     'about.ref': 'Basado en Hwang & Yoon (1981).',
+    'about.app.sectionTitle': 'Sobre esta aplicación',
+    'about.app.authorsLabel': 'Autores:',
+    'about.app.authorsNames': 'Leonardo F. Costa & Helder G. Costa',
+    'about.app.ack':
+      'Agradecemos su interés en esta herramienta. Para comentarios, sugerencias o reporte de errores, contáctenos:',
+    'about.app.emailLabel': 'Correo electrónico:',
 
     'theme.switchToDark': 'Tema oscuro',
     'theme.switchToLight': 'Tema claro',

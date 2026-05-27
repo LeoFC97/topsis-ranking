@@ -57,6 +57,22 @@ export function AboutAlgorithm() {
       <p className={styles.ref}>
         {t('about.ref')}
       </p>
+
+      <div className={styles.appInfo}>
+        <h2 className={styles.appInfoTitle}>{t('about.app.sectionTitle')}</h2>
+        <p className={styles.appInfoRow}>
+          <span className={styles.appInfoLabel}>{t('about.app.authorsLabel')}</span>
+          {' '}{t('about.app.authorsNames')}
+        </p>
+        <p className={styles.appInfoAck}>{t('about.app.ack')}</p>
+        <p className={styles.appInfoRow}>
+          <span className={styles.appInfoLabel}>{t('about.app.emailLabel')}</span>
+          {' '}
+          <a href="mailto:professor.hgc@gmail.com" className={styles.emailLink}>
+            professor.hgc@gmail.com
+          </a>
+        </p>
+      </div>
     </section>
   );
 }
