@@ -1,0 +1,5 @@
+variavel,Q1,Q3,IQR,corte_inferior,corte_superior,outliers_inferiores,outliers_superiores
+desempenho,55,72,17,29.5,97.5,,
+qualidade,66,74,8,54,86,40,90
+sustentabilidade,66,82,16,42,106,18,
+maturidade,75,81,6,66,90,65,200
