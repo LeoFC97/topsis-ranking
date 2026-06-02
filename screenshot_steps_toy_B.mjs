@@ -1,23 +1,23 @@
 /**
- * Captures clean cropped screenshots of each TOPSIS step from the Matrizes tab.
- * Run: node screenshot_steps.mjs
+ * Captures TOPSIS-RAD screenshots for Toy Example B.
+ * Settings: VPL=[42,40,30,65], DPL=[95,90,88,200] — DPL_C3 updated to 88 (new column max); only VPL_C3 changed from default (18→30).
+ * A8 (C3=18 < VPL_C3=30) is vetoed; A7 drops from 1st (Toy A) to 3rd.
+ * Run: node screenshot_steps_toy_B.mjs
  */
 import { chromium } from 'playwright';
-import { fileURLToPath } from 'url';
-import path from 'path';
 
 const OUTPUT_DIR = 'C:\\Users\\HELDE\\Dropbox\\latex_nova\\Topis_RAD_Working - Sem Telas';
 const CSV_PATH   = 'C:\\Users\\HELDE\\Dropbox\\git_helder\\topsis-ranking\\dpl_outlier.csv';
 const APP_URL    = 'http://localhost:5174/';
 
 const STEPS = [
-  { text: 'Step 1', file: 'fig_app_toy_example_1_G_matrix.png' },
-  { text: 'Step 2', file: 'fig_app_toy_example_1_weights.png' },
-  { text: 'Step 3', file: 'fig_app_toy_example_1_normalized.png' },
-  { text: 'Step 4', file: 'fig_app_toy_example_1_Matrix_normalized.png' },
-  { text: 'Step 5', file: 'fig_app_toy_example_1_pis_nis.png' },
-  { text: 'Step 6', file: 'sw.png' },
-  { text: 'Step 7', file: 'fig_toy_example1_scores.png' },
+  { text: 'Step 1', file: 'fig_app_toy_example_2_Gq.png' },
+  { text: 'Step 2', file: 'fig_app_toy_example_2_weights.png' },
+  { text: 'Step 3', file: 'fig_app_toy_example_2_Normalized.png' },
+  { text: 'Step 4', file: 'fig_app_toy_example_2_Weighted.png' },
+  { text: 'Step 5', file: 'fig_app_toy_example_2_DNL_VNL.png' },
+  { text: 'Step 6', file: 'fig_app_toy_example_2_Distances.png' },
+  { text: 'Step 7', file: 'fig_app_toy_example_2_Scores.png' },
 ];
 
 (async () => {
@@ -42,12 +42,59 @@ const STEPS = [
   await fileChooser.setFiles(CSV_PATH);
   await page.waitForTimeout(1200);
 
-  // --- Select TOPSIS mode and calculate ---
+  // --- Select TOPSIS-RAD mode ---
   await page.evaluate(() => {
     const btns = Array.from(document.querySelectorAll('button'));
-    btns.find(b => b.textContent?.trim() === 'TOPSIS')?.click();
+    btns.find(b => b.textContent?.trim() === 'TOPSIS-RAD')?.click();
   });
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(600);
+
+  // --- Set VPL_C3 = 30 (default is 18; index 4 in RAD settings inputs) ---
+  await page.evaluate(() => {
+    const h3 = Array.from(document.querySelectorAll('h3'))
+      .find(h => h.textContent?.includes('TOPSIS-RAD settings'));
+    if (!h3) { console.error('RAD settings h3 not found'); return; }
+    const section = h3.closest('section');
+    if (!section) { console.error('RAD settings section not found'); return; }
+    const inputs = Array.from(section.querySelectorAll('input[type="number"]'));
+    // Order: [C1-vpl, C1-dpl, C2-vpl, C2-dpl, C3-vpl, C3-dpl, C4-vpl, C4-dpl]
+    const vplC3 = inputs[4];
+    if (!vplC3) { console.error('VPL_C3 input not found'); return; }
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype, 'value'
+    ).set;
+    nativeInputValueSetter.call(vplC3, '30');
+    vplC3.dispatchEvent(new Event('input', { bubbles: true }));
+    vplC3.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await page.waitForTimeout(500);
+
+  // --- Capture DPL/VPL settings screen ---
+  const settingsId = `settings-${Date.now()}`;
+  const settingsOk = await page.evaluate((id) => {
+    const h3 = Array.from(document.querySelectorAll('h3'))
+      .find(h => h.textContent?.includes('TOPSIS-RAD settings'));
+    if (!h3) return false;
+    const section = h3.closest('section');
+    if (!section) return false;
+    section.id = id;
+    return true;
+  }, settingsId);
+
+  if (settingsOk) {
+    await page.locator(`#${settingsId}`).screenshot({
+      path: `${OUTPUT_DIR}\\fig_toy_example_2_VPL_and_DPL.png`,
+    });
+    const dims = await page.evaluate((id) => {
+      const el = document.getElementById(id);
+      return el ? `${el.offsetWidth}×${el.offsetHeight}` : '?';
+    }, settingsId);
+    console.log(`OK  fig_toy_example_2_VPL_and_DPL.png  (${dims})`);
+  } else {
+    console.error('FAIL: RAD settings section not found');
+  }
+
+  // --- Calculate ranking ---
   await page.evaluate(() => {
     const btns = Array.from(document.querySelectorAll('button'));
     btns.find(b => b.textContent?.includes('Calculate ranking'))?.click();
@@ -77,7 +124,7 @@ const STEPS = [
     }, step.text);
     await page.waitForTimeout(900);
 
-    // Give the step content a unique ID, then capture it as element screenshot
+    // Give the step content a unique ID, then capture it
     const elementId = `capture-target-${Date.now()}`;
     const ok = await page.evaluate(({ text, id }) => {
       const btn = Array.from(document.querySelectorAll('button'))
@@ -105,7 +152,7 @@ const STEPS = [
     console.log(`OK  ${step.file}  (${dims})`);
   }
 
-  // --- Capture ranking bar chart from Graficos tab ---
+  // --- Capture ranking bar chart from Charts tab ---
   await page.evaluate(() => {
     Array.from(document.querySelectorAll('button')).find(b => b.textContent?.includes('Charts'))?.click();
   });
@@ -124,13 +171,13 @@ const STEPS = [
 
   if (chartOk) {
     await page.locator(`#${chartId}`).screenshot({
-      path: `${OUTPUT_DIR}\\_fig_toy_Topsis.png`,
+      path: `${OUTPUT_DIR}\\_fig_toy_topsis_rad.png`,
     });
     const dims = await page.evaluate((id) => {
       const el = document.getElementById(id);
       return el ? `${el.offsetWidth}×${el.offsetHeight}` : '?';
     }, chartId);
-    console.log(`OK  _fig_toy_Topsis.png  (${dims})`);
+    console.log(`OK  _fig_toy_topsis_rad.png  (${dims})`);
   } else {
     console.error('FAIL: ranking chart container not found');
   }

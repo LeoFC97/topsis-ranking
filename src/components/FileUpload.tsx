@@ -8,6 +8,7 @@ const TEMPLATE_OPTIONS = [
   { id: 'health', file: '/modelo_saude.csv', fileName: 'modelo_saude.csv', nameKey: 'template.health' },
   { id: 'hdi', file: '/modelo_idh.csv', fileName: 'modelo_idh.csv', nameKey: 'template.hdi' },
   { id: 'esg', file: '/modelo_esg.csv', fileName: 'modelo_esg.csv', nameKey: 'template.esg' },
+  { id: 'article', file: '/topsis_rad_article.csv', fileName: 'topsis_rad_article.csv', nameKey: 'template.article' },
 ] as const;
 
 interface FileUploadProps {

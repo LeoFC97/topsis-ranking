@@ -34,6 +34,38 @@ function minMaxNormalize(matrix: number[][]): number[][] {
   return R;
 }
 
+/**
+ * TOPSIS-RAD normalisation with fixed DPL/VPL boundaries.
+ * benefit: r_ij = (c_ij - vpl[j]) / (dpl[j] - vpl[j])
+ * cost:    r_ij = (vpl[j] - c_ij) / (vpl[j] - dpl[j])
+ * Result clamped to [0, 1].
+ */
+function radNormalize(
+  matrix: number[][],
+  dpl: number[],
+  vpl: number[],
+  directions: CriterionDirection[]
+): number[][] {
+  const m = matrix.length;
+  const n = matrix[0]?.length ?? 0;
+  const R: number[][] = [];
+  for (let i = 0; i < m; i++) {
+    R.push([]);
+    for (let j = 0; j < n; j++) {
+      let r: number;
+      if (directions[j] === 'benefit') {
+        const denom = dpl[j] - vpl[j];
+        r = denom > 0 ? (matrix[i][j] - vpl[j]) / denom : 0;
+      } else {
+        const denom = vpl[j] - dpl[j];
+        r = denom > 0 ? (vpl[j] - matrix[i][j]) / denom : 0;
+      }
+      R[i][j] = Math.min(1, Math.max(0, r));
+    }
+  }
+  return R;
+}
+
 /** Normalização vetorial (Hwang & Yoon): r_ij = x_ij / sqrt(sum_i x_ij^2). */
 function vectorNormalize(matrix: number[][]): number[][] {
   const m = matrix.length;
@@ -232,7 +264,7 @@ export function topsisRad(
   const sumW = weights.reduce((a, b) => a + b, 0);
   const w = sumW > 0 ? weights.map((v) => v / sumW) : weights.map(() => 1 / n);
 
-  const R = normalizeMatrix(C, normalization);
+  const R = radNormalize(C, dpl, vpl, directions);
   const T: number[][] = R.map((row) => row.map((r, j) => r * w[j]));
   const { PIS, NIS } = computePISNIS(T, directions);
 

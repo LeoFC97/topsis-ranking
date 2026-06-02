@@ -35,22 +35,11 @@ export function DplVplInput({ data, value, onChange, disabled = false }: DplVplI
     const parsed = Number.isFinite(next) ? next : 0;
     const dpl = [...current.dpl];
     const vpl = [...current.vpl];
-    const benefit = dirs[idx] === 'benefit';
 
     if (kind === 'dpl') {
       dpl[idx] = parsed;
-      if (benefit) {
-        if (dpl[idx] < vpl[idx]) vpl[idx] = dpl[idx];
-      } else {
-        if (dpl[idx] > vpl[idx]) vpl[idx] = dpl[idx];
-      }
     } else {
       vpl[idx] = parsed;
-      if (benefit) {
-        if (vpl[idx] > dpl[idx]) dpl[idx] = vpl[idx];
-      } else {
-        if (vpl[idx] < dpl[idx]) dpl[idx] = vpl[idx];
-      }
     }
 
     onChange({ dpl, vpl });

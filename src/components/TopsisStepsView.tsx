@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { MatrixViewer } from './MatrixViewer';
 import type { TopsisFullResult } from '../types';
-import { LATEX_DPL_VPL_BENEFIT_ONLY, LATEX_PIS_NIS_BENEFIT_ONLY, LATEX_R_MINMAX, LATEX_R_VECTOR } from '../lib/topsisLatex';
+import { LATEX_DPL_VPL_BENEFIT_ONLY, LATEX_PIS_NIS_BENEFIT_ONLY, LATEX_R_MINMAX, LATEX_R_RAD, LATEX_R_VECTOR } from '../lib/topsisLatex';
 import styles from './TopsisStepsView.module.css';
 import { useI18n } from '../i18n';
 
@@ -21,8 +21,10 @@ export function TopsisStepsView({ result, method }: TopsisStepsViewProps) {
   const { matrixG, matrixR, matrixT, weights, PIS, NIS, distances } = steps;
 
   const stepItems = useMemo(() => {
-    const rDesc = isVector ? t('steps.step2.descriptionVector') : t('steps.step2.description');
-    const rFormula = isVector ? LATEX_R_VECTOR : LATEX_R_MINMAX;
+    const rDesc = method === 'rad'
+      ? t('steps.step2.descriptionRad')
+      : isVector ? t('steps.step2.descriptionVector') : t('steps.step2.description');
+    const rFormula = method === 'rad' ? LATEX_R_RAD : (isVector ? LATEX_R_VECTOR : LATEX_R_MINMAX);
     const refDesc = hasCost
       ? (method === 'rad' ? t('steps.step4.descriptionMixedRad') : t('steps.step4.descriptionMixed'))
       : (method === 'rad' ? t('steps.step4.descriptionRad') : t('steps.step4.description'));
