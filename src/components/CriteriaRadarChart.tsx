@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import {
   Radar,
   RadarChart,
@@ -19,6 +20,7 @@ interface CriteriaRadarChartProps {
 
 export function CriteriaRadarChart({ result, topN = 5 }: CriteriaRadarChartProps) {
   const { t } = useI18n();
+  const chartRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
   const { alternatives, criteria, steps } = result;
   const matrixT = steps.matrixT;
 
@@ -52,11 +54,13 @@ export function CriteriaRadarChart({ result, topN = 5 }: CriteriaRadarChartProps
   if (keys.length === 0 || data.length === 0) return null;
 
   return (
-    <div className="chart-container">
-      <h3 className="chart-title">{t('criteriaRadar.title')}</h3>
-      <p className="chart-subtitle">
-        {t('criteriaRadar.subtitle').replace('{topN}', String(topN))}
-      </p>
+    <div className="chart-container" ref={chartRef}>
+      <div>
+        <h3 className="chart-title">{t('criteriaRadar.title')}</h3>
+        <p className="chart-subtitle">
+          {t('criteriaRadar.subtitle').replace('{topN}', String(topN))}
+        </p>
+      </div>
       <ResponsiveContainer width="100%" height={380}>
         <RadarChart data={data}>
           <PolarGrid stroke="var(--border)" />

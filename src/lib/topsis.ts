@@ -266,7 +266,13 @@ export function topsisRad(
 
   const R = radNormalize(C, dpl, vpl, directions);
   const T: number[][] = R.map((row) => row.map((r, j) => r * w[j]));
-  const { PIS, NIS } = computePISNIS(T, directions);
+  
+  // TOPSIS-RAD: PIS/NIS calculated from normalized matrix R (not weighted T)
+  // This ensures VNL (NIS) reflects actual minimum values from qualified alternatives
+  // in the normalized space, avoiding zeros when alternatives are filtered by VPL
+  const { PIS: PIS_R, NIS: NIS_R } = computePISNIS(R, directions);
+  const PIS = PIS_R.map((p, j) => p * w[j]);
+  const NIS = NIS_R.map((n, j) => n * w[j]);
 
   const distances: { d_ib: number; d_iw: number; score: number }[] = [];
   const results: TopsisResult[] = [];

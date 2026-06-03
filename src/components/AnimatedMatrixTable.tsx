@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './AnimatedMatrixTable.module.css';
 import { useI18n } from '../i18n';
+import { exportMatrixToCSV, exportMatrixToLatex } from '../lib/matrixExport';
 
 interface AnimatedMatrixTableProps {
   matrix: number[][];
@@ -11,6 +12,8 @@ interface AnimatedMatrixTableProps {
   cellDelay?: number;
   /** Start animation when true */
   play?: boolean;
+  /** Optional title for the table (used in filenames) */
+  title?: string;
 }
 
 export function AnimatedMatrixTable({
@@ -20,10 +23,22 @@ export function AnimatedMatrixTable({
   decimals = 4,
   cellDelay = 50,
   play = true,
+  title,
 }: AnimatedMatrixTableProps) {
   const { t } = useI18n();
   const [visibleCells, setVisibleCells] = useState<Set<string>>(new Set());
   const [isComplete, setIsComplete] = useState(false);
+  const tableRef = useRef<HTMLTableElement>(null);
+  
+  const handleDownloadCSV = () => {
+    const filename = title ? `${title.toLowerCase().replace(/\s+/g, '_')}.csv` : 'matrix.csv';
+    exportMatrixToCSV(matrix, rowLabels, colLabels, decimals, filename);
+  };
+  
+  const handleDownloadLatex = () => {
+    const filename = title ? `${title.toLowerCase().replace(/\s+/g, '_')}.tex` : 'matrix.tex';
+    exportMatrixToLatex(matrix, rowLabels, colLabels, decimals, filename);
+  };
 
   useEffect(() => {
     if (!play || matrix.length === 0) return;
@@ -54,8 +69,24 @@ export function AnimatedMatrixTable({
 
   return (
     <div className={styles.wrapper}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginBottom: '8px' }}>
+        <button
+          onClick={handleDownloadCSV}
+          className={styles.downloadBtn}
+          title="Download as CSV"
+        >
+          📥 CSV
+        </button>
+        <button
+          onClick={handleDownloadLatex}
+          className={styles.downloadBtn}
+          title="Download as LaTeX"
+        >
+          📥 LaTeX
+        </button>
+      </div>
       <div className={styles.scroll}>
-        <table className={styles.table}>
+        <table className={styles.table} ref={tableRef}>
           <thead>
             <tr>
               <th className={styles.corner}></th>

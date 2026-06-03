@@ -49,10 +49,12 @@ export function MatrixHeatmap({ result }: MatrixHeatmapProps) {
 
   return (
     <div className="heatmap-container">
-      <h3 className="chart-title">{t('heatmap.title')}</h3>
-      <p className="chart-subtitle">
-        {t('heatmap.subtitle')}
-      </p>
+      <div>
+        <h3 className="chart-title">{t('heatmap.title')}</h3>
+        <p className="chart-subtitle">
+          {t('heatmap.subtitle')}
+        </p>
+      </div>
       <div className="heatmap-scroll">
         <table className="heatmap-table">
           <thead>

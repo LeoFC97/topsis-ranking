@@ -214,6 +214,7 @@ export function TopsisAnimatedFlow({ result, method }: TopsisAnimatedFlowProps) 
             rowLabels={data.rowLabels}
             colLabels={data.colLabels}
             decimals={data.decimals}
+            title={stepInfo.title}
           />
         </div>
       </div>

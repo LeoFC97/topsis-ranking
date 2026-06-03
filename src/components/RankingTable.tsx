@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import type { RankedAlternative } from '../types';
 import styles from './RankingTable.module.css';
 import { useI18n } from '../i18n';
@@ -8,6 +9,7 @@ interface RankingTableProps {
 
 export function RankingTable({ ranking }: RankingTableProps) {
   const { t } = useI18n();
+  const tableRef = useRef<HTMLTableElement>(null);
   if (ranking.length === 0) {
     return (
       <div className={styles.container}>
@@ -20,7 +22,7 @@ export function RankingTable({ ranking }: RankingTableProps) {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>{t('rankingTable.title')}</h2>
-      <table className={styles.table}>
+      <table className={styles.table} ref={tableRef}>
         <thead>
           <tr>
             <th>#</th>

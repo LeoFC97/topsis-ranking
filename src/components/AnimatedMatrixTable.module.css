@@ -49,6 +49,23 @@
   transition: all 0.25s ease-out;
 }
 
+.downloadBtn {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--code-bg);
+  color: var(--text-h);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.downloadBtn:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .cellVisible {
   opacity: 1;
   background: var(--code-bg);

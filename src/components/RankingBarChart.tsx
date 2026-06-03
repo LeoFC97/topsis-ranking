@@ -37,10 +37,10 @@ export function RankingBarChart({ ranking }: RankingBarChartProps) {
 
   return (
     <div className="chart-container">
-      <h3 className="chart-title">{t('bar.title')}</h3>
-      <p className="chart-subtitle">
-        {t('bar.subtitle')}
-      </p>
+      <div>
+        <h3 className="chart-title">{t('bar.title')}</h3>
+        <p className="chart-subtitle">{t('bar.subtitle')}</p>
+      </div>
       <ResponsiveContainer width="100%" height={320}>
         <BarChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 60 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
