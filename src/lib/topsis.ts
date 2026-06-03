@@ -267,12 +267,22 @@ export function topsisRad(
   const R = radNormalize(C, dpl, vpl, directions);
   const T: number[][] = R.map((row) => row.map((r, j) => r * w[j]));
   
-  // TOPSIS-RAD: PIS/NIS calculated from normalized matrix R (not weighted T)
-  // This ensures VNL (NIS) reflects actual minimum values from qualified alternatives
-  // in the normalized space, avoiding zeros when alternatives are filtered by VPL
-  const { PIS: PIS_R, NIS: NIS_R } = computePISNIS(R, directions);
-  const PIS = PIS_R.map((p, j) => p * w[j]);
-  const NIS = NIS_R.map((n, j) => n * w[j]);
+  // TOPSIS-RAD: DNL and VNL computed directly from weights and criterion directions.
+  // The RAD normalization maps VPL→0 and DPL→1. After weighting:
+  //   - For benefit criteria: VNL[j] = 0 × w[j] = 0, DNL[j] = 1 × w[j] = w[j]
+  //   - For cost criteria: VNL[j] = 1 × w[j] = w[j], DNL[j] = 0 × w[j] = 0
+  const PIS: number[] = []; // DNL (Desired Normalized Level)
+  const NIS: number[] = []; // VNL (Vetoed Normalized Level)
+  for (let j = 0; j < n; j++) {
+    if (directions[j] === 'benefit') {
+      PIS.push(w[j]);  // DNL = w[j]
+      NIS.push(0);     // VNL = 0
+    } else {
+      // For cost criteria: the logic reverses
+      PIS.push(0);     // DNL = 0
+      NIS.push(w[j]);  // VNL = w[j]
+    }
+  }
 
   const distances: { d_ib: number; d_iw: number; score: number }[] = [];
   const results: TopsisResult[] = [];

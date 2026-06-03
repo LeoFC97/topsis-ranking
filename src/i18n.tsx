@@ -114,11 +114,11 @@ const translations: Record<Lang, Dict> = {
     'steps.step4.title': 'Passo 5: Referências PIS e NIS',
     'steps.step4.titleRad': 'Passo 5: Referências DNL e VNL',
     'steps.step4.description': 'PIS = max por coluna (benefício), NIS = min por coluna.',
-    'steps.step4.descriptionRad': 'DNL = max por coluna (benefício), VNL = min por coluna.',
+    'steps.step4.descriptionRad': 'DNL = peso do critério (benefício), VNL = 0 (benefício); para custo: DNL = 0, VNL = peso.',
     'steps.step4.descriptionMixed':
       'Por critério j: em benefício, PIS_j = max_i(t_ij) e NIS_j = min_i(t_ij); em custo, PIS_j = min_i(t_ij) e NIS_j = max_i(t_ij).',
     'steps.step4.descriptionMixedRad':
-      'Por critério j: em benefício, DNL_j = max_i(t_ij) e VNL_j = min_i(t_ij); em custo, DNL_j = min_i(t_ij) e VNL_j = max_i(t_ij).',
+      'Por critério j: em benefício, DNL_j = w_j e VNL_j = 0; em custo, DNL_j = 0 e VNL_j = w_j.',
     'steps.step5.title': 'Passo 6: Distâncias (d_ib, d_iw)',
     'steps.step5.description': 'd_ib = distância ao PIS, d_iw = distância ao NIS.',
     'steps.step5.descriptionRad': 'd_ib = distância ao DNL, d_iw = distância ao VNL.',
@@ -160,11 +160,11 @@ const translations: Record<Lang, Dict> = {
     'didactic.step4.titleRad': 'Passo 4: DNL e VNL',
     'didactic.step4.formula': 'PIS_j = max(t_ij) | NIS_j = min(t_ij)',
     'didactic.step4.description': 'Ideal positivo (melhor) e negativo (pior) por critério.',
-    'didactic.step4.descriptionRad': 'Nível desejado (DNL, melhor) e inaceitável (VNL, pior) por critério.',
+    'didactic.step4.descriptionRad': 'DNL = peso (nível desejado), VNL = 0 (nível inaceitável) para benefício; para custo: DNL = 0, VNL = peso.',
     'didactic.step4.descriptionMixed':
       'Com critérios de custo: PIS usa o melhor valor por coluna (mínimo no custo) e NIS o pior (máximo no custo).',
     'didactic.step4.descriptionMixedRad':
-      'Com critérios de custo: DNL usa o melhor valor por coluna (mínimo no custo) e VNL o pior (máximo no custo).',
+      'Para custo: DNL = 0 (nível desejado = limite de aceitação) e VNL = peso (nível inaceitável = limite mínimo).',
     'didactic.step5.title': 'Passo 5: Distâncias',
     'didactic.step5.formula': 'd_i- = sqrt(sum(t_ij - NIS_j)^2) | d_i+ = sqrt(sum(t_ij - PIS_j)^2)',
     'didactic.step5.description': 'Distância euclidiana ao pior (NIS) e ao melhor (PIS).',
