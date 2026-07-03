@@ -40,54 +40,58 @@
   box-sizing: border-box;
 }
 
+/* Solid fills that mirror the pipeline scheme in public/tutorial.html.
+   Fixed hexes (not the theme tokens) so the same vivid colors and white/dark
+   ink hold in both light and dark mode. */
 .io {
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: #0ca30c;
+  border: 1px solid #0ca30c;
   border-radius: 999px;
-  color: var(--text-h);
+  color: #0a2e0a;
+  font-weight: 600;
 }
 
 .novel {
-  background: color-mix(in srgb, var(--cat-5) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cat-5) 50%, transparent);
-  color: var(--text-h);
+  background: #4a3aa7;
+  border: 1px solid #4a3aa7;
+  color: #fff;
 }
 
 .standard {
-  background: color-mix(in srgb, var(--cat-1) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cat-1) 45%, transparent);
-  color: var(--text-h);
+  background: #2a78d6;
+  border: 1px solid #2a78d6;
+  color: #fff;
 }
 
 .discard {
-  background: color-mix(in srgb, var(--critical) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--critical) 45%, transparent);
-  color: var(--text-h);
+  background: #d03b3b;
+  border: 1px solid #d03b3b;
+  color: #fff;
   max-width: 7rem;
   font-size: 0.78rem;
 }
 
 .cap {
-  background: color-mix(in srgb, var(--cat-3) 16%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cat-3) 55%, transparent);
-  color: var(--text-h);
+  background: #4a3aa7;
+  border: 1px solid #4a3aa7;
+  color: #fff;
   font-size: 0.78rem;
   max-width: 8rem;
 }
 
 .keep {
-  background: color-mix(in srgb, var(--cat-2) 14%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cat-2) 50%, transparent);
-  color: var(--text-h);
+  background: #2a78d6;
+  border: 1px solid #2a78d6;
+  color: #fff;
   font-size: 0.78rem;
   max-width: 8rem;
 }
 
 .out {
-  background: color-mix(in srgb, var(--good) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--good) 50%, transparent);
+  background: #0ca30c;
+  border: 1px solid #0ca30c;
   border-radius: 999px;
-  color: var(--text-h);
+  color: #0a2e0a;
   font-weight: 600;
 }
 
@@ -106,8 +110,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--cat-5) 14%, transparent);
-  border: 2px solid color-mix(in srgb, var(--cat-5) 55%, transparent);
+  background: #4a3aa7;
+  border: 2px solid #4a3aa7;
   border-radius: 10px;
   padding: 0.5rem 0.65rem;
 }
@@ -115,7 +119,7 @@
 .diamond span {
   font-size: 0.78rem;
   font-weight: 600;
-  color: var(--text-h);
+  color: #fff;
   line-height: 1.25;
   text-align: center;
 }
@@ -186,6 +190,24 @@
 .legStd {
   color: var(--cat-1);
   margin: 0 0.35rem 0 0.75rem;
+}
+
+.paperRef {
+  font-size: 0.8rem;
+  color: var(--text);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 0.75rem 0 0;
+}
+
+.paperLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-style: normal;
+}
+
+.paperLink:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 520px) {

@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual TOPSIS-RAD &mdash; User Guide</title>
+  <style>
+    :root {
+      --primary: #2a78d6;        /* app accent (blue) */
+      --primary-dark: #1c5cab;
+      --rad: #4a3aa7;            /* TOPSIS-RAD-specific (violet) */
+      --rad-dark: #372c7d;
+      --accent: #d03b3b;         /* veto / critical */
+      --green: #0ca30c;
+      --gold: #eda100;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --text-light: #666666;
+      --border: #dee2e6;
+      --code-bg: #f0f3f6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+    }
+
+    /* ---- Header / Hero ---- */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .hero h1 { font-size: 2.4rem; margin-bottom: 0.4rem; }
+    .hero p  { font-size: 1.15rem; opacity: 0.93; max-width: 760px; margin: 0 auto; }
+    .hero .tagline { font-size: 0.95rem; opacity: 0.85; margin-top: 0.6rem; font-style: italic; }
+
+    /* ---- Navigation ---- */
+    nav {
+      position: sticky;
+      top: 0;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      padding: 0.6rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 1.2rem;
+      justify-content: center;
+    }
+    nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      padding: 0.3rem 0;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+    nav a:hover { border-color: var(--primary); }
+    nav .sep { color: var(--border); font-size: 0.8rem; align-self: center; }
+
+    /* ---- Container ---- */
+    .container { max-width: 920px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    /* ---- Sections ---- */
+    section { margin-bottom: 2.8rem; }
+    section h2 {
+      font-size: 1.55rem;
+      color: var(--primary-dark);
+      border-bottom: 3px solid var(--primary);
+      padding-bottom: 0.35rem;
+      margin-bottom: 1rem;
+    }
+    section h3 { font-size: 1.15rem; color: var(--primary); margin: 1.4rem 0 0.5rem; }
+    p, li { margin-bottom: 0.55rem; }
+
+    /* ---- Cards ---- */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.3rem 1.5rem;
+      margin: 1rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .card h4 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--primary-dark); }
+
+    /* ---- Steps ---- */
+    .steps { counter-reset: step; list-style: none; padding: 0; }
+    .steps > li {
+      counter-increment: step;
+      position: relative;
+      padding-left: 3rem;
+      margin-bottom: 1.4rem;
+    }
+    .steps > li::before {
+      content: counter(step);
+      position: absolute; left: 0; top: 0;
+      width: 2rem; height: 2rem; line-height: 2rem;
+      text-align: center; border-radius: 50%;
+      background: var(--primary); color: #fff;
+      font-weight: 700; font-size: 0.9rem;
+    }
+
+    /* ---- Tip / Warning / Note / RAD boxes ---- */
+    .tip, .warning, .note, .rad {
+      border-left: 4px solid;
+      padding: 0.8rem 1rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+    .tip     { border-color: var(--green);   background: #e8f5e9; }
+    .warning { border-color: var(--accent);  background: #fdecea; }
+    .note    { border-color: var(--primary); background: #e3f0fa; }
+    .rad     { border-color: var(--rad);     background: #eeecf8; }
+    .rad strong, .rad-term { color: var(--rad-dark); }
+
+    /* ---- Code ---- */
+    code { background: var(--code-bg); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+    pre {
+      background: var(--code-bg);
+      padding: 1rem 1.2rem; border-radius: 6px;
+      overflow-x: auto; font-size: 0.88rem; line-height: 1.5; margin: 0.8rem 0;
+    }
+
+    /* ---- Table ---- */
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.93rem; }
+    th, td { border: 1px solid var(--border); padding: 0.55rem 0.8rem; text-align: left; }
+    th { background: var(--primary); color: #fff; font-weight: 600; }
+    tr:nth-child(even) td { background: #f5f7fa; }
+    td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .hl-up { color: var(--green); font-weight: 600; }
+    .hl-down { color: var(--accent); font-weight: 600; }
+    .hl-out { color: var(--text-light); font-style: italic; }
+
+    /* ---- Formula ---- */
+    .formula {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.3rem; margin: 0.8rem 0;
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      font-size: 1.05rem; text-align: center; line-height: 1.9;
+    }
+
+    /* ---- Pipeline diagram ---- */
+    .pipeline-diagram {
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 0.3rem; margin: 1.5rem 0;
+    }
+    .pipeline-diagram .box {
+      background: var(--primary); color: #fff;
+      padding: 0.55rem 0.9rem; border-radius: 6px;
+      font-size: 0.85rem; font-weight: 600; text-align: center; min-width: 96px;
+    }
+    .pipeline-diagram .box.rad-box { background: var(--rad); }
+    .pipeline-diagram .arrow { font-size: 1.3rem; color: var(--primary); font-weight: 700; }
+    .legend-inline { font-size: 0.85rem; text-align: center; color: var(--text-light); margin-top: -0.5rem; }
+    .swatch { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 3px; vertical-align: middle; margin: 0 0.15rem 0 0.6rem; }
+
+    /* ---- Grid ---- */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ---- Walkthrough step ---- */
+    .walkthrough-step {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--primary);
+      border-radius: 0 8px 8px 0;
+      padding: 1.3rem 1.5rem; margin: 1.5rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .walkthrough-step.rad-step { border-left-color: var(--rad); }
+    .walkthrough-step h4 { color: var(--primary-dark); font-size: 1.05rem; margin-bottom: 0.6rem; }
+    .walkthrough-step.rad-step h4 { color: var(--rad-dark); }
+    .step-number {
+      display: inline-block; color: #fff;
+      width: 1.8rem; height: 1.8rem; line-height: 1.8rem; text-align: center;
+      border-radius: 50%; font-weight: 700; font-size: 0.85rem;
+      margin-right: 0.5rem; vertical-align: middle; background: var(--primary);
+    }
+    .rad-step .step-number { background: var(--rad); }
+
+    /* ---- Appendix header ---- */
+    .appendix-header {
+      background: linear-gradient(135deg, var(--rad) 0%, var(--rad-dark) 100%);
+      color: #fff; padding: 1.8rem 2rem; border-radius: 8px;
+      margin: 2rem 0 1.5rem; text-align: center;
+    }
+    .appendix-header h2 { color: #fff; border: none; font-size: 1.6rem; margin-bottom: 0.3rem; }
+    .appendix-header p { opacity: 0.92; }
+
+    /* ---- Footer ---- */
+    footer {
+      text-align: center; padding: 2rem; color: var(--text-light);
+      font-size: 0.85rem; border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--primary); }
+
+    /* ---- Utility ---- */
+    .small { font-size: 0.88rem; color: var(--text-light); }
+    .pill {
+      display: inline-block; font-size: 0.78rem; font-weight: 700;
+      padding: 0.1rem 0.5rem; border-radius: 999px; vertical-align: middle;
+    }
+    .pill-rad { background: #eeecf8; color: var(--rad-dark); border: 1px solid var(--rad); }
+    .pill-std { background: #e3f0fa; color: var(--primary-dark); border: 1px solid var(--primary); }
+  </style>
+</head>
+
+<body>
+
+<!-- ================================================================ -->
+<!--  HERO                                                            -->
+<!-- ================================================================ -->
+<div class="hero">
+  <h1>Visual TOPSIS-RAD</h1>
+  <p>
+    An interactive app for ranking alternatives with <strong>TOPSIS-RAD</strong> &mdash;
+    <em>Ranking According to Desires</em>. Instead of anchoring the ideal solutions to the
+    best and worst values in the data, TOPSIS-RAD anchors them to the decision maker&rsquo;s
+    <strong>desired</strong> and <strong>vetoed</strong> performance levels.
+  </p>
+  <p class="tagline">Stable, desire-driven rankings &mdash; robust to outliers and to rank reversal.</p>
+</div>
+
+<!-- ================================================================ -->
+<!--  NAVIGATION                                                      -->
+<!-- ================================================================ -->
+<nav>
+  <a href="#overview">Overview</a>
+  <a href="#quickstart">Quick Start</a>
+  <a href="#data-input">Data Input</a>
+  <a href="#method">Method Choice</a>
+  <a href="#weights">Weights</a>
+  <a href="#dpl-vpl">DPL &amp; VPL</a>
+  <a href="#results">Results</a>
+  <a href="#rank-reversal">Rank Reversal</a>
+  <a href="#didactic">Didactic Mode</a>
+  <a href="#background">Method</a>
+  <a href="#faq">FAQ</a>
+  <a href="#reference">Reference</a>
+  <span class="sep">|</span>
+  <a href="#appendix-a" style="font-weight:700;">Appendix A: Walkthrough</a>
+</nav>
+
+<!-- ================================================================ -->
+<!--  MAIN CONTENT                                                    -->
+<!-- ================================================================ -->
+<div class="container">
+
+  <!-- ---- 1. OVERVIEW ---- -->
+  <section id="overview">
+    <h2>1. Overview</h2>
+    <p>
+      <strong>Visual TOPSIS-RAD</strong> is a web application for multicriteria ranking. It
+      implements both classic <strong>TOPSIS</strong> (Technique for Order of Preference by
+      Similarity to Ideal Solution) and the proposed <strong>TOPSIS-RAD</strong> method, which
+      grounds the ranking in the decision maker&rsquo;s explicit aspirations rather than in the
+      extremes of the observed data.
+    </p>
+
+    <div class="rad">
+      <strong>Why TOPSIS-RAD?</strong> Classic TOPSIS derives its reference points &mdash; the
+      Positive Ideal Solution (<em>PIS</em>) and Negative Ideal Solution (<em>NIS</em>) &mdash;
+      from the observed alternatives. This makes rankings vulnerable to three problems:
+      (1) <em>misalignment</em> with what the decision maker actually wants, (2) <em>sensitivity
+      to outliers</em>, and (3) <em>rank reversal</em> when alternatives are added or removed.
+      TOPSIS-RAD addresses all three by using two arrays of decision-maker-defined reference
+      levels.
+    </p>
+
+    <h3>What does the app do?</h3>
+    <ul>
+      <li>Accepts a performance matrix (alternatives &times; criteria) via CSV upload or a built-in template (including the <strong>TOPSIS-RAD paper example</strong>).</li>
+      <li>Lets you set criteria <strong>weights</strong> with an interactive radar or sliders (with per-criterion locks).</li>
+      <li>For TOPSIS-RAD, lets you enter <strong>Vetoed (VPL)</strong> and <strong>Desired (DPL)</strong> performance levels per criterion.</li>
+      <li>Screens out non-viable alternatives (VPL), caps performances at the desired level (DPL), and normalizes against these fixed frontiers.</li>
+      <li>Produces a ranking, charts (bar, radar, decision-matrix heatmap), the full chain of intermediate matrices, and a downloadable CSV.</li>
+      <li>Includes a <strong>rank-reversal</strong> simulator and an animated <strong>didactic mode</strong>.</li>
+    </ul>
+
+    <h3>The TOPSIS-RAD pipeline</h3>
+    <div class="pipeline-diagram">
+      <div class="box">Performance<br>Matrix G</div>
+      <span class="arrow">&rarr;</span>
+      <div class="box rad-box">VPL screen<br>(veto)</div>
+      <span class="arrow">&rarr;</span>
+      <div class="box rad-box">DPL cap<br>(desired)</div>
+      <span class="arrow">&rarr;</span>
+      <div class="box rad-box">Normalize<br>vs frontiers</div>
+      <span class="arrow">&rarr;</span>
+      <div class="box">Weighted<br>Matrix T</div>
+      <span class="arrow">&rarr;</span>
+      <div class="box rad-box">DNL / VNL</div>
+      <span class="arrow">&rarr;</span>
+      <div class="box">Distances &amp;<br>Ranking</div>
+    </div>
+    <p class="legend-inline">
+      <span class="swatch" style="background:var(--rad)"></span>TOPSIS-RAD-specific steps
+      <span class="swatch" style="background:var(--primary)"></span>steps shared with classic TOPSIS
+    </p>
+  </section>
+
+  <!-- ---- 2. QUICK START ---- -->
+  <section id="quickstart">
+    <h2>2. Quick Start</h2>
+    <ol class="steps">
+      <li>
+        <strong>Open the app</strong> &mdash; visit
+        <a href="https://topsis-ranking.vercel.app/">topsis-ranking.vercel.app</a>. You land on the
+        <strong>Data</strong> tab.
+      </li>
+      <li>
+        <strong>Load data</strong> &mdash; in the &ldquo;Template&rdquo; dropdown pick
+        <strong>&ldquo;TOPSIS-RAD paper example&rdquo;</strong> and click <strong>Load template</strong>,
+        or upload your own CSV.
+      </li>
+      <li>
+        <strong>Choose the method</strong> &mdash; under <em>Method</em>, select
+        <span class="pill pill-rad">TOPSIS-RAD</span> (or <span class="pill pill-std">TOPSIS</span> for the classic method).
+      </li>
+      <li>
+        <strong>Set the weights</strong> &mdash; distribute criteria importance with the radar or the sliders.
+      </li>
+      <li>
+        <strong>Set DPL &amp; VPL</strong> &mdash; in <em>TOPSIS-RAD settings (DPL/VPL)</em>, enter the
+        desired and minimum-acceptable level for each criterion.
+      </li>
+      <li>
+        <strong>Calculate</strong> &mdash; click <strong>Calculate ranking</strong>; the app jumps to the <strong>Ranking</strong> tab.
+      </li>
+      <li>
+        <strong>Explore &amp; export</strong> &mdash; browse the <strong>Charts</strong> and <strong>Matrices</strong> tabs, then click <strong>Export CSV</strong>.
+      </li>
+    </ol>
+
+    <div class="tip">
+      <strong>Tip:</strong> Start with the built-in <strong>TOPSIS-RAD paper example</strong> and the default
+      DPL/VPL values to get a feel for the interface before entering your own reference levels.
+    </div>
+  </section>
+
+  <!-- ---- 3. DATA INPUT ---- -->
+  <section id="data-input">
+    <h2>3. Data Input</h2>
+    <p>On the <strong>Data</strong> tab you can bring in a performance matrix two ways:</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h4>Upload a CSV</h4>
+        <p>
+          The <strong>first column</strong> holds alternative names; the remaining columns hold numeric
+          criteria scores. The header row names the criteria.
+        </p>
+        <pre>Alternative,C1,C2,C3,C4
+A1,68,72,74,78
+A2,62,76,78,80
+A3,58,70,150,76
+...</pre>
+        <p class="small">This is exactly the built-in <em>TOPSIS-RAD paper example</em>.</p>
+      </div>
+      <div class="card">
+        <h4>Built-in templates</h4>
+        <p>Pick from the dropdown, then <strong>Load template</strong> (use it now) or
+        <strong>Download template spreadsheet</strong> (edit offline first):</p>
+        <ul>
+          <li><strong>General example</strong> &mdash; a small generic dataset</li>
+          <li><strong>Cars</strong>, <strong>Health</strong>, <strong>HDI</strong>, <strong>ESG</strong> &mdash; domain examples</li>
+          <li><strong>TOPSIS-RAD paper example</strong> &mdash; the dataset used in the article (10 alternatives &times; 4 criteria)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Editing and criterion direction</h3>
+    <p>
+      After loading, the <strong>Dataset editor</strong> shows an editable table. You can change names and
+      values, <strong>add</strong> or <strong>remove</strong> rows, set each criterion&rsquo;s
+      <strong>direction</strong> (<em>Benefit</em> = higher is better, or <em>Cost</em> = lower is better),
+      and <strong>Save as CSV</strong>. Two stat cards report the number of <strong>alternatives</strong>
+      and <strong>criteria</strong>.
+    </p>
+    <div class="note">
+      <strong>Note:</strong> Direction matters for TOPSIS-RAD. For a <em>benefit</em> criterion, VPL is a
+      minimum acceptable value and DPL a desired ceiling; for a <em>cost</em> criterion the roles flip
+      (VPL is the maximum acceptable, DPL the desired floor). The app handles both automatically.
+    </div>
+  </section>
+
+  <!-- ---- 4. METHOD CHOICE ---- -->
+  <section id="method">
+    <h2>4. Choosing the Method</h2>
+    <p>Under the <strong>Method</strong> control you choose between:</p>
+    <div class="table-scroll">
+    <table>
+      <tr><th>Method</th><th>Reference points</th><th>Use when&hellip;</th></tr>
+      <tr>
+        <td><span class="pill pill-std">TOPSIS</span></td>
+        <td>PIS / NIS derived from the best and worst observed values.</td>
+        <td>You want the classic method, or a baseline to compare against.</td>
+      </tr>
+      <tr>
+        <td><span class="pill pill-rad">TOPSIS-RAD</span></td>
+        <td>DNL / VNL derived from decision-maker DPL / VPL frontiers.</td>
+        <td>You have explicit desired/unacceptable levels, outliers to tame, or want rank-reversal robustness.</td>
+      </tr>
+    </table>
+    </div>
+    <p>
+      Selecting <span class="pill pill-rad">TOPSIS-RAD</span> reveals the
+      <em>TOPSIS-RAD settings (DPL/VPL)</em> panel described in
+      <a href="#dpl-vpl">Section&nbsp;6</a>.
+    </p>
+  </section>
+
+  <!-- ---- 5. WEIGHTS ---- -->
+  <section id="weights">
+    <h2>5. Criteria Weights</h2>
+    <p>
+      Weights express the relative importance of the criteria. Both methods use them identically. Under
+      <em>Distribute weights</em> you have two equivalent editors:
+    </p>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Radar</h4>
+        <p>Drag the sliders around a radar plot. The total is always <strong>100</strong> (shown normalized to 1). Great for seeing the balance of importance at a glance.</p>
+      </div>
+      <div class="card">
+        <h4>Sliders</h4>
+        <p>A vertical list of sliders (0&ndash;100), one per criterion, with the normalized value beside each.</p>
+      </div>
+    </div>
+    <p>
+      Each criterion has a <strong>lock</strong> toggle: lock a weight to hold it fixed while the others
+      redistribute. The sum is renormalized to 1 automatically before the calculation.
+    </p>
+    <div class="tip">
+      <strong>Tip:</strong> Use <strong>Redistribute weights</strong> to reset to an equal split across all criteria.
+    </div>
+  </section>
+
+  <!-- ---- 6. DPL & VPL ---- -->
+  <section id="dpl-vpl">
+    <h2>6. Reference Levels: DPL &amp; VPL <span class="pill pill-rad">TOPSIS-RAD</span></h2>
+    <p>
+      This is the heart of TOPSIS-RAD. In the <em>TOPSIS-RAD settings (DPL/VPL)</em> panel you set, for
+      each criterion, two decision-maker-defined boundaries:
+    </p>
+
+    <div class="grid-2">
+      <div class="card" style="border-left:4px solid var(--rad);">
+        <h4 class="rad-term">VPL &mdash; Vetoed Performance Level</h4>
+        <p>The <strong>minimum acceptable</strong> performance (for a benefit criterion). Any alternative
+        that fails to reach the VPL on <em>any</em> criterion is <strong>vetoed</strong> &mdash; removed
+        from the feasible set before the ranking is computed.</p>
+        <p class="small">For a cost criterion, VPL is the <em>maximum</em> acceptable value.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--rad);">
+        <h4 class="rad-term">DPL &mdash; Desired Performance Level</h4>
+        <p>The <strong>desired</strong> performance (for a benefit criterion). Performances above the DPL
+        are <strong>capped</strong> to it: exceeding the desire brings no extra reward, so a single
+        spectacular value can no longer dominate the ranking.</p>
+        <p class="small">For a cost criterion, DPL is the desired <em>floor</em>.</p>
+      </div>
+    </div>
+
+    <div class="rad">
+      <strong>Two levels, two names.</strong> The values you type &mdash;
+      <span class="rad-term">DPL</span> and <span class="rad-term">VPL</span> &mdash; are raw
+      <em>performance</em> levels, used <em>before</em> normalization to cap and to veto. After
+      normalization they become the <span class="rad-term">DNL</span> (Desired Normalized Level) and
+      <span class="rad-term">VNL</span> (Vetoed Normalized Level), which take the place of PIS and NIS.
+      See <a href="#background">Section&nbsp;10</a>.
+    </div>
+
+    <p>
+      <strong>Defaults.</strong> When you switch to TOPSIS-RAD, the app pre-fills VPL with each
+      criterion&rsquo;s column <em>minimum</em> and DPL with its column <em>maximum</em> (reversed for cost
+      criteria). With these defaults, nothing is vetoed and nothing is capped, so TOPSIS-RAD reproduces a
+      Min&ndash;Max TOPSIS. Change the values to encode your actual desires.
+    </p>
+
+    <div class="warning">
+      <strong>Important:</strong> Set VPL below the values you consider unacceptable (too high and you may
+      veto everything), and DPL at the level beyond which you are indifferent (too low and you flatten real
+      distinctions). The <a href="#appendix-a">walkthrough</a> shows sensible choices.
+    </div>
+  </section>
+
+  <!-- ---- 7. RESULTS ---- -->
+  <section id="results">
+    <h2>7. Results</h2>
+
+    <h3>7.1 Ranking tab</h3>
+    <div class="card">
+      <p>Four stat cards summarize the run: <strong>Alternatives</strong>, <strong>Criteria</strong>,
+      <strong>1st place</strong>, and <strong>Max score</strong>. Below, the <strong>Final ranking</strong>
+      table lists every alternative with its position and closeness <strong>score</strong>
+      <em>S<sub>iw</sub></em> &isin; [0, 1] (higher = better). Click <strong>Export CSV</strong> to save it.</p>
+      <p class="small">In TOPSIS-RAD, vetoed alternatives are excluded from the table rather than ranked last.</p>
+    </div>
+
+    <h3>7.2 Charts tab</h3>
+    <div class="card">
+      <ul>
+        <li><strong>Ranking by score</strong> &mdash; a bar chart of the closeness scores, with dashed
+            reference lines for the best (upper) and worst (lower) values. Each alternative keeps a
+            consistent identity color shared with the radar.</li>
+        <li><strong>Criteria comparison (matrix T)</strong> &mdash; a radar of the weighted normalized
+            matrix for the top alternatives, with the reference frontiers (PIS/NIS &mdash; DNL/VNL in RAD)
+            drawn as dashed guides.</li>
+        <li><strong>Decision matrix (G) &mdash; Heatmap</strong> &mdash; the raw performance matrix shaded
+            by value, with per-column max and min rows.</li>
+      </ul>
+    </div>
+
+    <h3>7.3 Matrices tab</h3>
+    <div class="card">
+      <p>The full, expandable chain of intermediate matrices &mdash; from the decision matrix
+      <em>G</em>, through the normalized <em>R</em> and weighted <em>T</em>, to the reference vectors,
+      distances, and scores &mdash; so every number in the ranking is traceable.</p>
+    </div>
+  </section>
+
+  <!-- ---- 8. RANK REVERSAL ---- -->
+  <section id="rank-reversal">
+    <h2>8. Rank-Reversal Analysis</h2>
+    <div class="card">
+      <p>
+        On the <strong>Rank Reversal</strong> tab you can <strong>simulate removing alternatives</strong>
+        and see how the ranking of the remaining ones changes. Rank reversal happens when the relative
+        order of two alternatives flips just because the <em>set</em> of alternatives changed &mdash; a
+        classic weakness of data-anchored methods.
+      </p>
+      <ol class="steps">
+        <li><strong>Select</strong> one or more alternatives to remove.</li>
+        <li><strong>Analyze rank reversal</strong> &mdash; the app recomputes and shows a comparison of
+            original vs. new ranks and scores, flagging any reversals.</li>
+      </ol>
+      <div class="rad">
+        <strong>Why TOPSIS-RAD helps:</strong> because the <span class="rad-term">DNL</span>/<span class="rad-term">VNL</span>
+        frontiers come from your fixed DPL/VPL &mdash; not from the data &mdash; they do not move when
+        alternatives are removed. In this simulation those boundaries stay locked, so surviving
+        alternatives keep their scores and reversal is structurally suppressed.
+      </div>
+    </div>
+  </section>
+
+  <!-- ---- 9. DIDACTIC MODE ---- -->
+  <section id="didactic">
+    <h2>9. Didactic Mode</h2>
+    <div class="card">
+      <p>
+        The <strong>Didactic Mode</strong> tab plays an <strong>animated, step-by-step</strong> calculation:
+        normalized weights, the normalized and weighted matrices, the reference vectors, the distances
+        <em>d<sub>ib</sub></em> (to DNL/PIS) and <em>d<sub>iw</sub></em> (to VNL/NIS), and the final scores.
+        Use <strong>Play/Pause</strong>, <strong>Previous/Next</strong>, or jump to a specific step. It is
+        the fastest way to <em>see</em> how the ranking is built.
+      </p>
+    </div>
+  </section>
+
+  <!-- ---- 10. METHOD ---- -->
+  <section id="background">
+    <h2>10. Methodological Background</h2>
+
+    <h3>10.1 The TOPSIS-RAD routine</h3>
+    <div class="card">
+      <p>Given alternatives <em>A</em>, criteria <em>C</em>, decision matrix <em>G</em>, weights
+      <strong>w</strong>, directions <strong>p</strong>, and the reference arrays
+      <span class="rad-term">DPL</span> = {<em>d<sub>j</sub></em>} and
+      <span class="rad-term">VPL</span> = {<em>v<sub>j</sub></em>}, the routine is:</p>
+      <ol>
+        <li><strong>Inputs</strong> &mdash; collect <em>A, C, G, w, p</em> and the DPL/VPL arrays.</li>
+        <li><strong>Normalize the weights</strong> so that &sum;<em>w<sub>j</sub></em> = 1.</li>
+        <li><strong>Qualify</strong> &mdash; keep only alternatives that meet the veto level on every
+            criterion (benefit: <em>g<sub>ij</sub></em> &ge; <em>v<sub>j</sub></em>; cost:
+            <em>g<sub>ij</sub></em> &le; <em>v<sub>j</sub></em>). The rest are vetoed.</li>
+        <li><strong>Cap at DPL</strong> &mdash; build the desired-constrained matrix
+            <em>G<sup>d</sup></em>:
+            <div class="formula">
+              <em>g<sup>d</sup><sub>ij</sub></em> = min(<em>g<sub>ij</sub></em>, <em>d<sub>j</sub></em>) &nbsp;(benefit)
+              &nbsp;&nbsp;&middot;&nbsp;&nbsp; max(<em>g<sub>ij</sub></em>, <em>d<sub>j</sub></em>) &nbsp;(cost)
+            </div>
+        </li>
+        <li><strong>Normalize against the frontiers</strong> &mdash; not Min&ndash;Max over the data, but
+            against the VPL (lower) and DPL (upper) bounds:
+            <div class="formula">
+              <em>r<sub>ij</sub></em> = ( <em>g<sup>d</sup><sub>ij</sub></em> &minus; <em>v<sub>j</sub></em> ) / ( <em>d<sub>j</sub></em> &minus; <em>v<sub>j</sub></em> )
+            </div>
+            This is what makes the frontiers independent of the alternative set. Values are clamped to [0, 1].</li>
+        <li><strong>Weight</strong> &mdash; <em>t<sub>ij</sub></em> = <em>w<sub>j</sub></em> &middot; <em>r<sub>ij</sub></em>.</li>
+        <li><strong>Reference levels</strong> &mdash; because normalization maps DPL &rarr; 1 and VPL &rarr; 0,
+            the weighted frontiers are known in closed form (benefit shown):
+            <div class="formula">
+              <span class="rad-term">DNL</span><sub>j</sub> = <em>w<sub>j</sub></em> &nbsp;&nbsp;&middot;&nbsp;&nbsp;
+              <span class="rad-term">VNL</span><sub>j</sub> = 0
+            </div>
+            These replace PIS and NIS &mdash; and they never depend on the data.</li>
+        <li><strong>Distances</strong> &mdash; Euclidean distance of each alternative to the frontiers:
+            <em>d<sub>ib</sub></em> to DNL and <em>d<sub>iw</sub></em> to VNL.</li>
+        <li><strong>Closeness</strong> &mdash;
+            <div class="formula">
+              <em>S<sub>iw</sub></em> = <em>d<sub>iw</sub></em> / ( <em>d<sub>ib</sub></em> + <em>d<sub>iw</sub></em> )
+            </div>
+        </li>
+        <li><strong>Rank</strong> the surviving alternatives by decreasing <em>S<sub>iw</sub></em>.</li>
+      </ol>
+    </div>
+
+    <h3>10.2 DPL/VPL vs. DNL/VNL</h3>
+    <div class="rad">
+      Keep the two levels straight:
+      <ul>
+        <li><span class="rad-term">DPL / VPL</span> &mdash; the raw <em>performance</em> levels you type
+            in. Used <em>before</em> normalization, to cap (DPL) and to veto (VPL).</li>
+        <li><span class="rad-term">DNL / VNL</span> &mdash; the <em>normalized</em> levels derived
+            afterward. They substitute for PIS / NIS in the distance calculation.</li>
+      </ul>
+    </div>
+
+    <h3>10.3 How this differs from classic TOPSIS</h3>
+    <div class="table-scroll">
+    <table>
+      <tr><th>Aspect</th><th>Classic TOPSIS</th><th>TOPSIS-RAD</th></tr>
+      <tr><td>Reference points</td><td>Best/worst observed values (PIS/NIS)</td><td>Desired/vetoed frontiers (DNL/VNL)</td></tr>
+      <tr><td>Normalization</td><td>Min&ndash;Max (or vector) over the data</td><td>Against fixed VPL/DPL bounds</td></tr>
+      <tr><td>Outliers</td><td>Stretch the scale; can dominate</td><td>Capped at DPL; bounded influence</td></tr>
+      <tr><td>Non-viable options</td><td>Ranked last</td><td>Vetoed out of the set</td></tr>
+      <tr><td>Rank reversal</td><td>Possible when the set changes</td><td>Suppressed (frontiers are fixed)</td></tr>
+    </table>
+    </div>
+    <p class="small">
+      Classic TOPSIS in this app follows Hwang &amp; Yoon (1981). An <em>Advanced (algorithm)</em> panel lets
+      the classic method use Min&ndash;Max or vector normalization; TOPSIS-RAD always uses its own
+      frontier-based normalization.
+    </p>
+  </section>
+
+  <!-- ---- 11. FAQ ---- -->
+  <section id="faq">
+    <h2>11. Frequently Asked Questions</h2>
+
+    <div class="card">
+      <h4>When should I use TOPSIS-RAD instead of classic TOPSIS?</h4>
+      <p>Whenever you can articulate what &ldquo;good enough&rdquo; (DPL) and &ldquo;unacceptable&rdquo;
+      (VPL) mean for each criterion, or when your data has outliers, or when you need rankings that stay
+      stable as alternatives are added or removed.</p>
+    </div>
+
+    <div class="card">
+      <h4>What happens to a vetoed alternative?</h4>
+      <p>It is removed from the feasible set before ranking &mdash; it simply does not appear in the
+      results. An alternative is vetoed if it fails the VPL on <em>any</em> single criterion.</p>
+    </div>
+
+    <div class="card">
+      <h4>What if I don&rsquo;t know good DPL/VPL values yet?</h4>
+      <p>Leave the defaults (column max/min). With them, nothing is capped or vetoed and TOPSIS-RAD matches
+      Min&ndash;Max TOPSIS. Then adjust one criterion at a time and watch the ranking respond.</p>
+    </div>
+
+    <div class="card">
+      <h4>Can I mix benefit and cost criteria?</h4>
+      <p>Yes. Set each criterion&rsquo;s direction in the Dataset editor. For cost criteria the VPL/DPL roles
+      flip automatically (VPL = maximum acceptable, DPL = desired floor).</p>
+    </div>
+
+    <div class="card">
+      <h4>Why does an outstanding value stop helping past a point?</h4>
+      <p>Because DPL <em>caps</em> it: once a performance reaches the desired level, exceeding it adds no
+      further credit. This is deliberate &mdash; it prevents a single outlier from distorting the ranking.</p>
+    </div>
+
+    <div class="card">
+      <h4>How do I reproduce the paper&rsquo;s example?</h4>
+      <p>Load the <strong>TOPSIS-RAD paper example</strong> template and follow
+      <a href="#appendix-a">Appendix&nbsp;A</a>, which lists the exact weights, VPL, and DPL used and the
+      resulting ranking.</p>
+    </div>
+  </section>
+
+  <!-- ---- 12. REFERENCE ---- -->
+  <section id="reference">
+    <h2>12. Reference</h2>
+
+    <h3>Citation</h3>
+    <div class="card">
+      <p>If you use this app or method in your research, please cite:</p>
+      <pre>Costa, L. F., Costa, H. G., Lima, D., &amp; Rodrigues, B. (2026).
+TOPSIS-RAD: Ranking According to Desires. arXiv:2606.07253.</pre>
+      <p class="small">Open-access preprint: <a href="https://arxiv.org/abs/2606.07253">arxiv.org/abs/2606.07253</a></p>
+    </div>
+
+    <h3>Key References</h3>
+    <div class="card">
+      <ul>
+        <li>Hwang, C.-L. &amp; Yoon, K. (1981). <em>Multiple Attribute Decision Making: Methods and Applications.</em> Springer.</li>
+        <li>Costa, L. F., Costa, H. G., Lima, D., &amp; Rodrigues, B. (2026). <em>TOPSIS-RAD: Ranking According to Desires.</em> arXiv:2606.07253.</li>
+      </ul>
+    </div>
+
+    <h3>Glossary</h3>
+    <div class="table-scroll">
+    <table>
+      <tr><th>Symbol / Term</th><th>Definition</th></tr>
+      <tr><td><em>G</em></td><td>Decision (performance) matrix, <em>m</em> alternatives &times; <em>n</em> criteria</td></tr>
+      <tr><td><strong>w</strong></td><td>Criteria weight vector (sums to 1)</td></tr>
+      <tr><td><strong>p</strong></td><td>Criterion directions (benefit / cost)</td></tr>
+      <tr><td class="rad-term">DPL</td><td>Desired Performance Level (raw, per criterion)</td></tr>
+      <tr><td class="rad-term">VPL</td><td>Vetoed Performance Level (raw, per criterion)</td></tr>
+      <tr><td><em>G<sup>d</sup></em></td><td>Desired-constrained matrix (performances capped at DPL)</td></tr>
+      <tr><td><em>R</em>, <em>T</em></td><td>Normalized matrix and weighted normalized matrix</td></tr>
+      <tr><td class="rad-term">DNL</td><td>Desired Normalized Level (replaces PIS)</td></tr>
+      <tr><td class="rad-term">VNL</td><td>Vetoed Normalized Level (replaces NIS)</td></tr>
+      <tr><td><em>d<sub>ib</sub></em>, <em>d<sub>iw</sub></em></td><td>Distances to DNL and to VNL</td></tr>
+      <tr><td><em>S<sub>iw</sub></em></td><td>Closeness coefficient (the ranking score)</td></tr>
+    </table>
+    </div>
+  </section>
+
+  <!-- ================================================================ -->
+  <!--  APPENDIX A: STEP-BY-STEP WALKTHROUGH                           -->
+  <!-- ================================================================ -->
+  <section id="appendix-a">
+    <div class="appendix-header">
+      <h2>Appendix A: Step-by-Step Walkthrough</h2>
+      <p>Ranking the built-in TOPSIS-RAD paper example, and seeing the desires at work</p>
+    </div>
+
+    <p>
+      This walkthrough uses the built-in <strong>TOPSIS-RAD paper example</strong> &mdash; 10 alternatives
+      (A1&ndash;A10) evaluated on 4 benefit criteria (C1&ndash;C4). Notice two <em>outliers</em>
+      (A3 scores <strong>150</strong> on C3; A5 scores <strong>118</strong> on C4) and one clearly
+      <em>weak</em> alternative (A8 = 15, 20, 5, 41). We rank with <strong>equal weights</strong> and the
+      following decision-maker levels:
+    </p>
+    <div class="table-scroll">
+    <table>
+      <tr><th></th><th class="num">C1</th><th class="num">C2</th><th class="num">C3</th><th class="num">C4</th></tr>
+      <tr><td class="rad-term">VPL (min acceptable)</td><td class="num">50</td><td class="num">50</td><td class="num">40</td><td class="num">50</td></tr>
+      <tr><td class="rad-term">DPL (desired)</td><td class="num">90</td><td class="num">88</td><td class="num">100</td><td class="num">100</td></tr>
+    </table>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="walkthrough-step">
+      <h4><span class="step-number">1</span> Load the paper example</h4>
+      <p>On the <strong>Data</strong> tab, choose <strong>&ldquo;TOPSIS-RAD paper example&rdquo;</strong> in
+      the Template dropdown and click <strong>Load template</strong>. The Dataset editor fills with 10
+      alternatives &times; 4 criteria; the stat cards read <strong>Alternatives: 10</strong> and
+      <strong>Criteria: 4</strong>. All four criteria default to <em>Benefit</em>.</p>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="walkthrough-step rad-step">
+      <h4><span class="step-number">2</span> Select TOPSIS-RAD</h4>
+      <p>Under <strong>Method</strong>, click <span class="pill pill-rad">TOPSIS-RAD</span>. The
+      <em>TOPSIS-RAD settings (DPL/VPL)</em> panel appears with one row per criterion, pre-filled with the
+      column min (VPL) and max (DPL).</p>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="walkthrough-step">
+      <h4><span class="step-number">3</span> Set equal weights</h4>
+      <p>Leave the weights equal (25 each &rarr; 0.25 normalized), or click <strong>Redistribute
+      weights</strong> to enforce an even split. This isolates the effect of the reference levels.</p>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="walkthrough-step rad-step">
+      <h4><span class="step-number">4</span> Enter the desired and vetoed levels</h4>
+      <p>In the DPL/VPL panel, type the values from the table above. Two things are now encoded:</p>
+      <ul>
+        <li><strong>VPL</strong> declares the minimum acceptable performance. A8 (15, 20, 5, 41) fails
+            every criterion &mdash; it will be <span class="hl-down">vetoed</span>.</li>
+        <li><strong>DPL</strong> declares the desired level. The outliers exceed it and will be
+            <span class="rad-term">capped</span>: A3&rsquo;s C3 150&rarr;100, A5&rsquo;s C4 118&rarr;100,
+            and A7&rsquo;s C4 105&rarr;100.</li>
+      </ul>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="walkthrough-step">
+      <h4><span class="step-number">5</span> Calculate the ranking</h4>
+      <p>Click <strong>Calculate ranking</strong>. The app switches to the <strong>Ranking</strong> tab.
+      A8 does not appear &mdash; it was vetoed. The nine survivors are ranked:</p>
+      <div class="table-scroll">
+      <table>
+        <tr><th class="num">#</th><th>Alternative</th><th class="num">Score S<sub>iw</sub></th></tr>
+        <tr><td class="num">1</td><td>A4</td><td class="num">0.7494</td></tr>
+        <tr><td class="num">2</td><td>A7</td><td class="num">0.7174</td></tr>
+        <tr><td class="num">3</td><td>A5</td><td class="num">0.6628</td></tr>
+        <tr><td class="num">4</td><td>A9</td><td class="num">0.5651</td></tr>
+        <tr><td class="num">5</td><td>A2</td><td class="num">0.5499</td></tr>
+        <tr><td class="num">6</td><td>A3</td><td class="num">0.5463</td></tr>
+        <tr><td class="num">7</td><td>A1</td><td class="num">0.5385</td></tr>
+        <tr><td class="num">8</td><td>A10</td><td class="num">0.5098</td></tr>
+        <tr><td class="num">9</td><td>A6</td><td class="num">0.4890</td></tr>
+        <tr><td class="num hl-out">&mdash;</td><td class="hl-out">A8</td><td class="num hl-out">vetoed</td></tr>
+      </table>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="walkthrough-step rad-step">
+      <h4><span class="step-number">6</span> Compare with classic TOPSIS &mdash; the desires at work</h4>
+      <p>Switch <strong>Method</strong> to <span class="pill pill-std">TOPSIS</span> and recalculate. With
+      the same equal weights, classic TOPSIS gives:</p>
+      <div class="table-scroll">
+      <table>
+        <tr><th class="num">#</th><th>Classic TOPSIS</th><th class="num">Score</th><th>&nbsp;</th><th class="num">#</th><th>TOPSIS-RAD</th></tr>
+        <tr><td class="num">1</td><td>A7</td><td class="num">0.7403</td><td></td><td class="num">1</td><td class="hl-up">A4</td></tr>
+        <tr><td class="num">2</td><td>A4</td><td class="num">0.7193</td><td></td><td class="num">2</td><td>A7</td></tr>
+        <tr><td class="num">3</td><td>A5</td><td class="num">0.7120</td><td></td><td class="num">3</td><td>A5</td></tr>
+        <tr><td class="num">4</td><td>A3</td><td class="num">0.6603</td><td></td><td class="num">6</td><td class="hl-down">A3 &darr;</td></tr>
+        <tr><td class="num">&hellip;</td><td>&hellip;</td><td class="num">&hellip;</td><td></td><td class="num">&hellip;</td><td>&hellip;</td></tr>
+        <tr><td class="num">10</td><td class="hl-out">A8</td><td class="num">0.0000</td><td></td><td class="num hl-out">&mdash;</td><td class="hl-out">A8 vetoed</td></tr>
+      </table>
+      </div>
+      <p>Three effects stand out, all driven by the reference levels:</p>
+      <ul>
+        <li><strong>A7 &rarr; A4 at the top.</strong> Part of A7&rsquo;s classic edge was its C4 = 105.
+            Once DPL caps C4 at 100, that edge shrinks and <span class="hl-up">A4 takes first place</span>.</li>
+        <li><strong>A3 falls from 4th to 6th.</strong> A3&rsquo;s classic strength was the C3 = 150 spike;
+            capped to 100, its <span class="hl-down">outlier advantage disappears</span>.</li>
+        <li><strong>A8 is vetoed, not ranked last.</strong> Rather than occupying the bottom with score 0,
+            the non-viable option is removed from consideration entirely.</li>
+      </ul>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="walkthrough-step">
+      <h4><span class="step-number">7</span> Read the charts and matrices</h4>
+      <p>On the <strong>Charts</strong> tab, the bar chart shows the nine scores and the radar compares the
+      top alternatives against the DNL/VNL frontiers. On the <strong>Matrices</strong> tab, expand the steps
+      to see the capped matrix (A3&rsquo;s C3 now reads 100), the frontier-normalized <em>R</em>, the
+      weighted <em>T</em>, the DNL/VNL vectors, and the distances that produce each score.</p>
+    </div>
+
+    <!-- Step 8 -->
+    <div class="walkthrough-step">
+      <h4><span class="step-number">8</span> Test rank-reversal robustness</h4>
+      <p>On the <strong>Rank Reversal</strong> tab, remove, say, A5 and re-analyze. Because the DNL/VNL
+      frontiers are fixed by your DPL/VPL &mdash; not by the surviving data &mdash; the remaining
+      alternatives keep their scores and their order. This is the stability TOPSIS-RAD is designed for.</p>
+    </div>
+
+    <!-- Summary -->
+    <h3>Summary of the Walkthrough</h3>
+    <div class="card">
+      <p>Using equal weights on the paper example, with VPL = (50, 50, 40, 50) and DPL = (90, 88, 100, 100):</p>
+      <ol>
+        <li>The <strong>VPL</strong> vetoes the non-viable A8, so it never competes.</li>
+        <li>The <strong>DPL</strong> caps the outliers (A3&rsquo;s C3, A5&rsquo;s and A7&rsquo;s C4), so no
+            single spectacular value dominates.</li>
+        <li>The ranking reflects <em>balanced achievement of the desired levels</em> &mdash; A4 leads &mdash;
+            rather than raw extremes, and it is stable when the alternative set changes.</li>
+      </ol>
+      <div class="tip">
+        <strong>Next steps:</strong> Try lowering a DPL to see distinctions flatten, raise a VPL to veto more
+        alternatives, or shift the weights toward one criterion &mdash; and watch the ranking respond to your
+        stated desires.
+      </div>
+    </div>
+
+  </section>
+
+</div><!-- /container -->
+
+<footer>
+  <strong>Visual TOPSIS-RAD</strong> &mdash; User Guide<br>
+  App: Leonardo F. Costa &amp; Helder G. Costa &bull; Method: Costa, Costa, Lima &amp; Rodrigues (2026),
+  <a href="https://arxiv.org/abs/2606.07253">arXiv:2606.07253</a>
+</footer>
+
+</body>
+</html>

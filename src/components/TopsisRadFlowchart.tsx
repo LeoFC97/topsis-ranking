@@ -61,7 +61,7 @@ export function TopsisRadFlowchart() {
         <div className={styles.arrow}>↓</div>
         <div className={`${styles.node} ${styles.standard}`}>{t('flowchartRad.step5')}</div>
         <div className={styles.arrow}>↓</div>
-        <div className={`${styles.node} ${styles.standard}`}>{t('flowchartRad.step6')}</div>
+        <div className={`${styles.node} ${styles.novel}`}>{t('flowchartRad.step6')}</div>
         <div className={styles.arrow}>↓</div>
         <div className={`${styles.node} ${styles.standard}`}>{t('flowchartRad.step7')}</div>
         <div className={styles.arrow}>↓</div>
@@ -73,6 +73,19 @@ export function TopsisRadFlowchart() {
       <p className={styles.legend}>
         <span className={styles.legNovel}>■</span> {t('flowchartRad.legendNovel')}
         <span className={styles.legStd}>■</span> {t('flowchartRad.legendStd')}
+      </p>
+
+      <p className={styles.paperRef}>
+        {t('flowchartRad.paperRef')}{' '}
+        <a
+          className={styles.paperLink}
+          href="https://arxiv.org/abs/2606.07253"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          arXiv:2606.07253
+        </a>
+        .
       </p>
     </div>
   );

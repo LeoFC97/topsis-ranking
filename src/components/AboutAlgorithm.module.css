@@ -27,6 +27,27 @@
   color: var(--accent);
 }
 
+.tutorialLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 1.5rem;
+  padding: 0.55rem 1.1rem;
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.tutorialLink:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  text-decoration: underline;
+}
+
 .flowchart {
   display: flex;
   flex-direction: column;
@@ -50,17 +71,18 @@
   line-height: 1.4;
 }
 
+/* Solid fills matching the pipeline scheme in public/tutorial.html. */
 .nodeStandard {
-  background: color-mix(in srgb, var(--cat-1) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cat-1) 45%, transparent);
-  color: var(--text-h);
+  background: #2a78d6;
+  border: 1px solid #2a78d6;
+  color: #fff;
 }
 
 .nodeOutput {
-  background: color-mix(in srgb, var(--good) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--good) 50%, transparent);
+  background: #0ca30c;
+  border: 1px solid #0ca30c;
   border-radius: 999px;
-  color: var(--text-h);
+  color: #0a2e0a;
   font-weight: 600;
 }
 
