@@ -130,11 +130,6 @@ export function DashboardLayout({
         id="sidebar-nav"
         className={`${styles.sidebar} ${mobileNavOpen ? styles.sidebarOpen : ''}`}
       >
-        <div className={styles.sidebarHeader}>
-          <h1 className={styles.logo}>{t('app.brand')}</h1>
-          <span className={styles.subtitle}>{t('app.subtitle')}</span>
-        </div>
-
         <nav className={styles.nav} aria-label={t('nav.flow')}>
           <div className={styles.navSection}>
             <span className={styles.navLabel}>{t('nav.flow')}</span>
@@ -275,6 +270,21 @@ export function DashboardLayout({
 
         <div className={styles.content}>
           {activeTab === 'dados' && (
+            <>
+            <div className={styles.hero}>
+              <h1 className={styles.heroTitle}>{t('app.brand')}</h1>
+              <p className={styles.heroSubtitle}>{t('app.subtitle')}</p>
+              <p className={styles.heroDesc}>{t('app.heroDescription')}</p>
+              <p className={styles.heroTagline}>{t('app.heroTagline')}</p>
+              <a
+                className={styles.heroTutorialBtn}
+                href="/tutorial.html"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                📖 {t('about.tutorialLink')}
+              </a>
+            </div>
             <section className={styles.panel}>
               <h2 className={styles.panelTitle}>{t('data.title')}</h2>
               <FileUpload onFileLoaded={onFileLoaded} />
@@ -417,6 +427,7 @@ export function DashboardLayout({
                 </>
               )}
             </section>
+            </>
           )}
 
           {activeTab === 'ranking' && fullResult && (

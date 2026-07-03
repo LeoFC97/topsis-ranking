@@ -15,6 +15,10 @@ const translations: Record<Lang, Dict> = {
     'app.brand': 'TOPSIS-RAD',
     'app.documentTitle': 'TOPSIS — Ranking multicritério',
     'app.subtitle': 'Rankeamento de Acordo com os Desejos',
+    'app.heroDescription':
+      'Ordene alternativas pela similaridade às soluções ideais — mas, em vez de tomar os ideais dos melhores e piores valores dos seus dados, o TOPSIS-RAD os ancora nos níveis de desempenho desejado e vetado definidos pelo decisor.',
+    'app.heroTagline':
+      'Rankings estáveis, guiados pelos desejos — robustos a outliers e à reversão de ranking.',
     'nav.flow': 'Fluxo',
     'tab.data': 'Dados',
     'tab.ranking': 'Ranking',
@@ -300,7 +304,11 @@ const translations: Record<Lang, Dict> = {
     'lang.es': 'Spanish',
     'app.brand': 'TOPSIS-RAD',
     'app.documentTitle': 'TOPSIS-RAD — Multi-criteria ranking',
-    'app.subtitle': 'Ranking According Desires',
+    'app.subtitle': 'Ranking According to Desires',
+    'app.heroDescription':
+      "Rank alternatives by their similarity to ideal solutions — but instead of taking the ideals from the best and worst values in your data, TOPSIS-RAD anchors them to the decision maker's desired and vetoed performance levels.",
+    'app.heroTagline':
+      'Stable, desire-driven rankings — robust to outliers and to rank reversal.',
     'nav.flow': 'Flow',
     'tab.data': 'Data',
     'tab.ranking': 'Ranking',
@@ -571,9 +579,13 @@ const translations: Record<Lang, Dict> = {
     'lang.en': '英语',
     'lang.zh': '中文',
     'lang.es': '西班牙语',
-    'app.brand': 'TOPSIS',
+    'app.brand': 'TOPSIS-RAD',
     'app.documentTitle': 'TOPSIS-RAD — 多准则排序',
     'app.subtitle': '根据您的愿望进行排名',
+    'app.heroDescription':
+      '根据方案与理想解的相似度进行排序——但不同于从数据的最优与最差值中提取理想解，TOPSIS-RAD 将其锚定在决策者设定的期望（DPL）与否决（VPL）绩效水平上。',
+    'app.heroTagline':
+      '以愿望为导向的稳定排序——对离群值与排序反转具有鲁棒性。',
     'nav.flow': '流程',
     'tab.data': '数据',
     'tab.ranking': '排名',
@@ -842,6 +854,10 @@ const translations: Record<Lang, Dict> = {
     'app.brand': 'TOPSIS-RAD',
     'app.documentTitle': 'TOPSIS-RAD — Ranking multicriterio',
     'app.subtitle': 'Ranking de Acuerdo con Deseos',
+    'app.heroDescription':
+      'Ordena alternativas por su similitud con las soluciones ideales — pero, en lugar de tomar los ideales de los mejores y peores valores de tus datos, TOPSIS-RAD los ancla en los niveles de desempeño deseado y vetado definidos por el decisor.',
+    'app.heroTagline':
+      'Rankings estables, guiados por los deseos — robustos ante valores atípicos y la reversión de rango.',
     'nav.flow': 'Flujo',
     'tab.data': 'Datos',
     'tab.ranking': 'Ranking',
