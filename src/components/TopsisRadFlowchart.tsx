@@ -27,7 +27,10 @@ export function TopsisRadFlowchart() {
             <span>{t('flowchartRad.VNLQ')}</span>
           </div>
           <div className={styles.sideBranch}>
-            <span className={styles.branchLbl}>{t('flowchartRad.no')}</span>
+            <span className={styles.branchConn}>
+              <span className={styles.branchLbl}>{t('flowchartRad.no')}</span>
+              <span className={styles.branchArrowH} aria-hidden>→</span>
+            </span>
             <div className={`${styles.node} ${styles.discard}`}>{t('flowchartRad.discard')}</div>
           </div>
         </div>
@@ -44,10 +47,12 @@ export function TopsisRadFlowchart() {
           <div className={styles.dplBranches}>
             <div className={styles.branchCol}>
               <span className={styles.branchLbl}>{t('flowchartRad.yes')}</span>
+              <span className={styles.branchArrowV} aria-hidden>↓</span>
               <div className={`${styles.node} ${styles.cap}`}>{t('flowchartRad.cap')}</div>
             </div>
             <div className={styles.branchCol}>
               <span className={styles.branchLbl}>{t('flowchartRad.no')}</span>
+              <span className={styles.branchArrowV} aria-hidden>↓</span>
               <div className={`${styles.node} ${styles.keep}`}>{t('flowchartRad.keep')}</div>
             </div>
           </div>

@@ -11,15 +11,6 @@ export function AboutAlgorithm() {
         {t('about.intro')}
       </p>
 
-      <a
-        className={styles.tutorialLink}
-        href="/tutorial.html"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        📖 {t('about.tutorialLink')}
-      </a>
-
       <TopsisRadFlowchart />
 
       <h3 className={styles.subTitle}>{t('about.sectionClassic')}</h3>
