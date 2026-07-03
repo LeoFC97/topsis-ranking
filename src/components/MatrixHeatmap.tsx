@@ -38,13 +38,33 @@ export function MatrixHeatmap({ result }: MatrixHeatmapProps) {
     };
   }, [matrix]);
 
-  const getColor = (val: number) => {
+  // Single-hue blue sequential ramp (pale #cde2fb → strong #256abf), aligned with
+  // the app's harmonized palette. Low value = pale, high value = saturated.
+  const rampRgb = (val: number) => {
     const range = maxVal - minVal || 1;
     const t = (val - minVal) / range;
-    const r = Math.round(99 + (1 - t) * 156);
-    const g = Math.round(130 + (1 - t) * 125);
-    const b = Math.round(237 - t * 77);
+    return {
+      r: Math.round(205 - t * 168),
+      g: Math.round(226 - t * 120),
+      b: Math.round(251 - t * 60),
+    };
+  };
+
+  const getColor = (val: number) => {
+    const { r, g, b } = rampRgb(val);
     return `rgb(${r}, ${g}, ${b})`;
+  };
+
+  // Cells always sit on a light→mid blue fill (independent of theme), so pick the
+  // value's ink by background luminance rather than the theme text token.
+  const getTextColor = (val: number) => {
+    const { r, g, b } = rampRgb(val);
+    const lin = (c: number) => {
+      const s = c / 255;
+      return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+    };
+    const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+    return L > 0.5 ? '#0b1a2e' : '#f5f8ff';
   };
 
   return (
@@ -72,7 +92,7 @@ export function MatrixHeatmap({ result }: MatrixHeatmapProps) {
                 <td
                   key={j}
                   className="heatmap-cell heatmap-cell-limit"
-                  style={{ backgroundColor: getColor(val) }}
+                  style={{ backgroundColor: getColor(val), color: getTextColor(val) }}
                   title={`${t('heatmap.maxIn')} ${criteria[j]}: ${val}`}
                 >
                   {val}
@@ -86,7 +106,7 @@ export function MatrixHeatmap({ result }: MatrixHeatmapProps) {
                   <td
                     key={j}
                     className="heatmap-cell"
-                    style={{ backgroundColor: getColor(val) }}
+                    style={{ backgroundColor: getColor(val), color: getTextColor(val) }}
                     title={`${alternatives[i]} - ${criteria[j]}: ${val}`}
                   >
                     {val}
@@ -100,7 +120,7 @@ export function MatrixHeatmap({ result }: MatrixHeatmapProps) {
                 <td
                   key={j}
                   className="heatmap-cell heatmap-cell-limit"
-                  style={{ backgroundColor: getColor(val) }}
+                  style={{ backgroundColor: getColor(val), color: getTextColor(val) }}
                   title={`${t('heatmap.minIn')} ${criteria[j]}: ${val}`}
                 >
                   {val}

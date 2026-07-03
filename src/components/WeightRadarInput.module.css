@@ -33,7 +33,7 @@
 .chartContainer {
   flex: 1;
   min-width: 300px;
-  background: linear-gradient(145deg, #2e1065 0%, #1e1b4b 50%, #312e81 100%);
+  background: linear-gradient(145deg, #0f2e5c 0%, #123663 50%, #1b4a8f 100%);
   border-radius: 16px;
   padding: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);

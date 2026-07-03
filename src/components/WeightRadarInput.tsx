@@ -139,8 +139,8 @@ export function WeightRadarInput({
             <RadarChart data={chartData} margin={{ top: 24, right: 24, bottom: 24, left: 24 }}>
               <defs>
                 <linearGradient id="radarFill" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#ef4444" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="#ef4444" stopOpacity={0.1} />
+                  <stop offset="0%" stopColor="#fab219" stopOpacity={0.45} />
+                  <stop offset="100%" stopColor="#fab219" stopOpacity={0.12} />
                 </linearGradient>
               </defs>
               <PolarGrid stroke="rgba(255,255,255,0.5)" strokeWidth={1} />
@@ -156,10 +156,10 @@ export function WeightRadarInput({
               <Radar
                 name={t('weights.title')}
                 dataKey="value"
-                stroke="#ef4444"
+                stroke="#fab219"
                 fill="url(#radarFill)"
                 strokeWidth={2}
-                dot={{ r: 4, fill: '#ef4444', strokeWidth: 0 }}
+                dot={{ r: 4, fill: '#fab219', strokeWidth: 0 }}
               />
               <Tooltip
                 content={({ active, payload }) => {

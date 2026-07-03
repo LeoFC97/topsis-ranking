@@ -18,9 +18,8 @@ interface RankingBarChartProps {
 }
 
 const COLORS = [
-  '#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899',
-  '#f43f5e', '#f97316', '#eab308', '#84cc16', '#22c55e',
-  '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1',
+  'var(--cat-1)', 'var(--cat-2)', 'var(--cat-3)', 'var(--cat-4)',
+  'var(--cat-5)', 'var(--cat-6)', 'var(--cat-7)', 'var(--cat-8)',
 ];
 
 export function RankingBarChart({ ranking }: RankingBarChartProps) {
@@ -70,17 +69,17 @@ export function RankingBarChart({ ranking }: RankingBarChartProps) {
           />
           <ReferenceLine
             y={maxScore}
-            stroke="#22c55e"
+            stroke="var(--good)"
             strokeDasharray="5 5"
             strokeWidth={2}
-            label={{ value: t('bar.upperLimit'), position: 'right', fill: '#22c55e' }}
+            label={{ value: t('bar.upperLimit'), position: 'right', fill: 'var(--good)' }}
           />
           <ReferenceLine
             y={minScore}
-            stroke="#ef4444"
+            stroke="var(--critical)"
             strokeDasharray="5 5"
             strokeWidth={2}
-            label={{ value: t('bar.lowerLimit'), position: 'right', fill: '#ef4444' }}
+            label={{ value: t('bar.lowerLimit'), position: 'right', fill: 'var(--critical)' }}
           />
           <Bar dataKey="score" name={t('ranking.col.score')} radius={[4, 4, 0, 0]}>
             {data.map((entry, index) => (

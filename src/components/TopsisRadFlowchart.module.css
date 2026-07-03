@@ -41,43 +41,52 @@
 }
 
 .io {
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.45);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
   color: var(--text-h);
 }
 
 .novel {
-  background: rgba(234, 88, 12, 0.12);
-  border: 1px solid rgba(234, 88, 12, 0.5);
+  background: color-mix(in srgb, var(--cat-5) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cat-5) 50%, transparent);
   color: var(--text-h);
 }
 
 .standard {
-  background: rgba(59, 130, 246, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.4);
+  background: color-mix(in srgb, var(--cat-1) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cat-1) 45%, transparent);
   color: var(--text-h);
 }
 
 .discard {
-  background: rgba(220, 38, 38, 0.12);
-  border: 1px solid rgba(220, 38, 38, 0.45);
+  background: color-mix(in srgb, var(--critical) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--critical) 45%, transparent);
   color: var(--text-h);
   max-width: 7rem;
   font-size: 0.78rem;
 }
 
-.cap,
+.cap {
+  background: color-mix(in srgb, var(--cat-3) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cat-3) 55%, transparent);
+  color: var(--text-h);
+  font-size: 0.78rem;
+  max-width: 8rem;
+}
+
 .keep {
-  background: rgba(234, 179, 8, 0.14);
-  border: 1px solid rgba(234, 179, 8, 0.5);
+  background: color-mix(in srgb, var(--cat-2) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cat-2) 50%, transparent);
   color: var(--text-h);
   font-size: 0.78rem;
   max-width: 8rem;
 }
 
 .out {
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.45);
+  background: color-mix(in srgb, var(--good) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--good) 50%, transparent);
+  border-radius: 999px;
   color: var(--text-h);
   font-weight: 600;
 }
@@ -97,8 +106,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(234, 88, 12, 0.14);
-  border: 2px solid rgba(234, 88, 12, 0.55);
+  background: color-mix(in srgb, var(--cat-5) 14%, transparent);
+  border: 2px solid color-mix(in srgb, var(--cat-5) 55%, transparent);
   border-radius: 10px;
   padding: 0.5rem 0.65rem;
 }
@@ -129,7 +138,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(234, 88, 12, 0.95);
+  color: var(--cat-5);
   margin-bottom: 0.15rem;
 }
 
@@ -170,12 +179,12 @@
 }
 
 .legNovel {
-  color: rgba(234, 88, 12, 0.95);
+  color: var(--cat-5);
   margin-right: 0.35rem;
 }
 
 .legStd {
-  color: rgba(59, 130, 246, 0.95);
+  color: var(--cat-1);
   margin: 0 0.35rem 0 0.75rem;
 }
 

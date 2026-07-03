@@ -49,7 +49,10 @@ export function CriteriaRadarChart({ result, topN = 5 }: CriteriaRadarChartProps
     [result.ranking, topN]
   );
 
-  const COLORS = ['#6366f1', '#22c55e', '#f97316', '#ec4899', '#06b6d4'];
+  const COLORS = [
+    'var(--cat-1)', 'var(--cat-2)', 'var(--cat-3)', 'var(--cat-4)',
+    'var(--cat-5)', 'var(--cat-6)', 'var(--cat-7)', 'var(--cat-8)',
+  ];
 
   if (keys.length === 0 || data.length === 0) return null;
 
@@ -75,8 +78,8 @@ export function CriteriaRadarChart({ result, topN = 5 }: CriteriaRadarChartProps
           <Radar
             name={t('criteriaRadar.pis')}
             dataKey="PIS"
-            stroke="#059669"
-            fill="#059669"
+            stroke="var(--good)"
+            fill="var(--good)"
             fillOpacity={0.08}
             strokeWidth={2}
             strokeDasharray="4 4"
@@ -84,8 +87,8 @@ export function CriteriaRadarChart({ result, topN = 5 }: CriteriaRadarChartProps
           <Radar
             name={t('criteriaRadar.nis')}
             dataKey="NIS"
-            stroke="#dc2626"
-            fill="#dc2626"
+            stroke="var(--critical)"
+            fill="var(--critical)"
             fillOpacity={0.08}
             strokeWidth={2}
             strokeDasharray="4 4"
