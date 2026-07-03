@@ -20,6 +20,7 @@ const translations: Record<Lang, Dict> = {
     'app.heroTagline':
       'Rankings estáveis, guiados pelos desejos — robustos a outliers e à reversão de ranking.',
     'nav.flow': 'Fluxo',
+    'nav.tutorial': 'Tutorial',
     'tab.data': 'Dados',
     'tab.ranking': 'Ranking',
     'tab.charts': 'Gráficos',
@@ -310,6 +311,7 @@ const translations: Record<Lang, Dict> = {
     'app.heroTagline':
       'Stable, desire-driven rankings — robust to outliers and to rank reversal.',
     'nav.flow': 'Flow',
+    'nav.tutorial': 'Tutorial',
     'tab.data': 'Data',
     'tab.ranking': 'Ranking',
     'tab.charts': 'Charts',
@@ -587,6 +589,7 @@ const translations: Record<Lang, Dict> = {
     'app.heroTagline':
       '以愿望为导向的稳定排序——对离群值与排序反转具有鲁棒性。',
     'nav.flow': '流程',
+    'nav.tutorial': '教程',
     'tab.data': '数据',
     'tab.ranking': '排名',
     'tab.charts': '图表',
@@ -859,6 +862,7 @@ const translations: Record<Lang, Dict> = {
     'app.heroTagline':
       'Rankings estables, guiados por los deseos — robustos ante valores atípicos y la reversión de rango.',
     'nav.flow': 'Flujo',
+    'nav.tutorial': 'Tutorial',
     'tab.data': 'Datos',
     'tab.ranking': 'Ranking',
     'tab.charts': 'Gráficos',

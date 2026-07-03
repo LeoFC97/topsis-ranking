@@ -186,6 +186,16 @@ export function DashboardLayout({
               {mobileNavOpen ? '✕' : '☰'}
             </span>
           </button>
+          <a
+            className={styles.topTutorialBtn}
+            href="/tutorial.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            title={t('about.tutorialLink')}
+          >
+            <span aria-hidden>📖</span>
+            <span className={styles.topTutorialLabel}>{t('nav.tutorial')}</span>
+          </a>
           <div className={styles.mainTopSpacer} />
           <button
             type="button"
@@ -276,14 +286,6 @@ export function DashboardLayout({
               <p className={styles.heroSubtitle}>{t('app.subtitle')}</p>
               <p className={styles.heroDesc}>{t('app.heroDescription')}</p>
               <p className={styles.heroTagline}>{t('app.heroTagline')}</p>
-              <a
-                className={styles.heroTutorialBtn}
-                href="/tutorial.html"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                📖 {t('about.tutorialLink')}
-              </a>
             </div>
             <section className={styles.panel}>
               <h2 className={styles.panelTitle}>{t('data.title')}</h2>
