@@ -225,7 +225,7 @@ export function DashboardLayout({
                 title={t('lang.en')}
                 aria-label={t('lang.en')}
               >
-                <span aria-hidden>🇺🇸</span>
+                <span aria-hidden>🇬🇧</span>
               </button>
               <button
                 type="button"
